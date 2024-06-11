@@ -5,6 +5,10 @@ import pyvisa
 
 class GPIBCommunication:
     def __init__(self):
+        """
+        GPIB communication class to communicate with GPIB device.
+
+        """
         self.device = None
         try:
             self.rm = pyvisa.ResourceManager()
@@ -14,7 +18,13 @@ class GPIBCommunication:
             self.error_message = f"Failed to initialize ResourceManager: {e}"
             print(self.error_message)
 
-    def connect_device(self, address):
+    def connect_device(self, address: str) -> None:
+        """
+        Try to connect to a GPIB device using the given address.
+
+        :param address: GPIB address to connect to.
+        :return:
+        """
         if not self.rm:
             print("ResourceManager not initialized.")
             return
@@ -27,7 +37,12 @@ class GPIBCommunication:
             self.error_message = f"Failed to connect to {address}: {e}"
             print(self.error_message)
 
-    def send_command(self, command):
+    def send_command(self, command: str) -> None:
+        """
+        Send a command to the GPIB device.
+
+        :param command: The command to send.
+        """
         if self.device:
             try:
                 self.device.write(command)
@@ -38,7 +53,12 @@ class GPIBCommunication:
         else:
             print("No device connected.")
 
-    def read_response(self):
+    def read_response(self) -> str:
+        """
+        Read response from the GPIB device.
+
+        :return:
+        """
         if self.device:
             try:
                 response = self.device.read()

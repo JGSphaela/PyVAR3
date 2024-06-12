@@ -119,6 +119,7 @@ class GPIBCommand:
             command += f",{v_range}"
         self.communication.send_command(command)
 
+    # Note: can be rewritten in the future to better comply with the official syntax
     def set_measurement_mode(self, mode: int, channels: Optional[List[int]] = None) -> None:
         """
         Specifies the measurement mode and the channels used for measurements.

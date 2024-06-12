@@ -10,7 +10,11 @@ def test_gpib_command():
     gpib_command = GPIBCommand(gpib_comm)
     gpib_comm.connect_device("GPIB0::17::INSTR")
 
+    # Set output format
     gpib_command.set_output_format(1, 1)
+
+    # Set measurement mode
+    gpib_command.set_measurement_mode(16, [1])
 
     # Test enabling channels
     gpib_command.enable_channels([1, 2])

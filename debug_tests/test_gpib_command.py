@@ -1,5 +1,4 @@
 # tests/test_gpib_command.py
-import time
 
 from src.gpib.gpib_communication import GPIBCommunication
 from src.gpib.gpib_command import GPIBCommand
@@ -12,6 +11,9 @@ def test_gpib_command():
 
     # Set output format
     gpib_command.set_output_format(1, 1)
+
+    # Enable timer
+    gpib_command.time_stamp(enable=True)
 
     # Set measurement mode
     gpib_command.set_measurement_mode(16, [1])
@@ -31,16 +33,19 @@ def test_gpib_command():
     # Test setting measurement mode
     # gpib_command.set_measurement_mode(mode=1, channels=[1])
 
+    # Reset timer count
+    gpib_command.reset_time(channels=[1])
+
     # Test triggering measurement
     gpib_command.trigger_measurement()
 
     # Wait for measurement complete
-    gpib_command.wait_pending()
+    print(gpib_command.wait_pending())
 
-    # time.sleep(10)
+    print(gpib_command.number_of_measurements())
 
     # Read the return data
-    print(gpib_comm.read_response())
+    # print(gpib_comm.read_response())
     print(gpib_comm.read_ascii())
 
 

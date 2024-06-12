@@ -86,3 +86,22 @@ class GPIBCommunication:
                 print(self.error_message)
         else:
             print("No device connected.")
+
+    def query_response(self, command: str) -> str:
+        """
+        Query response from the GPIB device.
+
+        :param command: The command to query.
+        :return:
+        """
+        if self.device:
+            try:
+                response = self.device.query(command)
+                print(f"Command sent: {command}")
+                print(f"Response: {response}")
+                return response
+            except pyvisa.VisaIOError as e:
+                self.error_message = f"Failed to query response: {e}"
+                print(self.error_message)
+        else:
+            print("No device connected.")

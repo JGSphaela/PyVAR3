@@ -138,15 +138,18 @@ class GPIBCommand:
         """
         self.communication.send_command("XE")
 
-    def wait_pending(self) -> None:
+    def wait_pending(self) -> str:
         """
         Waits until pending operation is complete.
+
+        :return:
         """
-        self.communication.send_command("*OPC?")
+        return self.communication.query_response("*OPC?")
 
     def reset_channel(self, channels: Optional[List[int]] = None) -> None:
         """
         Resets the channels used for measurements.
+
         :param channels: A list of channel numbers to reset. If None, disables all channels.
         """
         command = "DZ"
@@ -157,6 +160,7 @@ class GPIBCommand:
     def set_smu_mode(self, channels: List[int], mode: int) -> None:
         """
         Sets the SMU measurement operation mode.
+
         :param channels: SMU channel numbers.
         :param mode: SMU measurement mode.
         """
@@ -164,12 +168,41 @@ class GPIBCommand:
         command += " " + ",".join(map(str, channels)) + ',' + str(mode)
         self.communication.send_command(command)
 
-    def set_output_format(self, format: int, mode: int = None) -> None:
+    def set_output_format(self, out_format: int, mode: int = None) -> None:
         """
         Sets the output format of the measurement.
-        :param format: Data output format.
+
+        :param out_format: Data output format.
         :param mode: Data output mode.
         """
         command = "FMT"
-        command += " " + "," + str(format) + ',' + str(mode)
+        command += " " + "," + str(out_format) + ',' + str(mode)
+        self.communication.send_command(command)
+
+    def number_of_measurements(self) -> str:
+        """
+        [Query] Query the number of measurements.
+
+        :return:
+        """
+        return self.communication.query_response("NUB?")
+
+    def time_stamp(self, enable: bool = False) -> None:
+        """
+        Enables or disables time stamp function.
+
+        :param enable:
+        """
+        command = f"TSC {int(enable)}"
+        self.communication.send_command(command)
+
+    def reset_time(self, channels: Optional[List[int]] = None) -> None:
+        """
+        Clears the timer count.
+
+        :param channels: SMU or MFCMU channel number.
+        """
+        command = "TSR"
+        if channels:
+            command += " " + ",".join(map(str, channels))
         self.communication.send_command(command)

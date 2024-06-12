@@ -69,7 +69,7 @@ def test_gpib_command():
     # gpib_command.disable_channels([3, 4])
 
     # Test setting voltage sweep
-    gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=0.5, icomp=0.01)
+    gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=20, icomp=0.01)
 
     # Query error
     gpib_command.query_error(mode=1)

@@ -35,7 +35,7 @@ class GPIBCommand:
             command += " " + ",".join(map(str, channels))
         self.communication.send_command(command)
 
-    def set_voltage_sweep(self, channel: int, mode: int, v_range: int, start: float, stop: float, step: float,
+    def set_voltage_sweep(self, channel: int, mode: int, v_range: int, start: float, stop: float, step: int,
                           icomp: Optional[float] = None, pcomp: Optional[float] = None) -> None:
         """
         Sets the staircase sweep voltage source and its parameters.

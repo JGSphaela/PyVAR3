@@ -160,5 +160,14 @@ class GPIBCommand:
         :param mode: SMU measurement mode.
         """
         command = "CMM"
-        command += " " + ",".join(map(str, channels)) + ',' + mode
+        command += " " + ",".join(map(str, channels)) + ',' + str(mode)
         self.communication.send_command(command)
+
+    def set_output_format(self, format: int, mode: int = None) -> None:
+        """
+        Sets the output format of the measurement.
+        :param format: Data output format.
+        :param mode: Data output mode.
+        """
+        command = "FMT"
+        command += " " + "," + str(format) + ',' + str(mode)

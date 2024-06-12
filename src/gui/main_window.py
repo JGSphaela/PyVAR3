@@ -4,7 +4,7 @@ from src.gpib.gpib_communication import GPIBCommunication
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("GPIB Communication Tool")
+        self.setWindowTitle("PyVAR3: A Minimal GPIB Measurement Tool")
         self.setGeometry(100, 100, 800, 600)
         self.initUI()
         self.gpib_comm = GPIBCommunication()

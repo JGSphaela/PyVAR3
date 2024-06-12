@@ -1,4 +1,5 @@
 # tests/test_gpib_command.py
+import time
 
 from src.gpib.gpib_communication import GPIBCommunication
 from src.gpib.gpib_command import GPIBCommand
@@ -16,10 +17,10 @@ def test_gpib_command():
     gpib_command.disable_channels([3, 4])
 
     # Test setting voltage sweep
-    gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=5.0, step=0.1, icomp=0.01)
+    gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=0.5, icomp=0.01)
 
     # Test forcing voltage
-    gpib_command.force_voltage(channel=2, v_range=0, voltage=5.0, icomp=0.01)
+    gpib_command.force_voltage(channel=2, v_range=0, voltage=1.0, icomp=0.01)
 
     # Test setting measurement mode
     # gpib_command.set_measurement_mode(mode=1, channels=[1])
@@ -30,8 +31,14 @@ def test_gpib_command():
     # Wait for measurement complete
     gpib_command.wait_pending()
 
+    # time.sleep(10)
+
     # Read the return data
-    print(gpib_comm.read_ascii())
+    print(gpib_comm.read_response())
+    print(gpib_comm.read_response())
+    print(gpib_comm.read_response())
+    print(gpib_comm.read_response())
+    # print(gpib_comm.read_ascii())
 
 
 if __name__ == "__main__":

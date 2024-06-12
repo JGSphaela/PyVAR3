@@ -176,7 +176,7 @@ class GPIBCommand:
         :param mode: Data output mode.
         """
         command = "FMT"
-        command += " " + "," + str(out_format) + ',' + str(mode)
+        command += " " + str(out_format) + ',' + str(mode)
         self.communication.send_command(command)
 
     def number_of_measurements(self) -> str:

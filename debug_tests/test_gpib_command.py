@@ -31,7 +31,7 @@ def test_gpib_command():
     gpib_command.wait_pending()
 
     # Read the return data
-    print(gpib_comm.read_response())
+    print(gpib_comm.read_ascii())
 
 
 if __name__ == "__main__":

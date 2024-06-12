@@ -69,3 +69,20 @@ class GPIBCommunication:
                 print(self.error_message)
         else:
             print("No device connected.")
+
+    def read_ascii(self) -> str:
+        """
+        Read ASCII response from the GPIB device.
+
+        :return:
+        """
+        if self.device:
+            try:
+                response = self.device.read_ascii_values()
+                print(f"Response: {response}")
+                return response
+            except pyvisa.VisaIOError as e:
+                self.error_message = f"Failed to read response: {e}"
+                print(self.error_message)
+        else:
+            print("No device connected.")

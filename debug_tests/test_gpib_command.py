@@ -10,7 +10,7 @@ def test_gpib_command():
     gpib_command = GPIBCommand(gpib_comm)
     gpib_comm.connect_device("GPIB0::17::INSTR")
 
-    gpib_command.set_output_format(1,1)
+    gpib_command.set_output_format(1, 1)
 
     # Test enabling channels
     gpib_command.enable_channels([1, 2])
@@ -37,10 +37,7 @@ def test_gpib_command():
 
     # Read the return data
     print(gpib_comm.read_response())
-    print(gpib_comm.read_response())
-    print(gpib_comm.read_response())
-    print(gpib_comm.read_response())
-    # print(gpib_comm.read_ascii())
+    print(gpib_comm.read_ascii())
 
 
 if __name__ == "__main__":

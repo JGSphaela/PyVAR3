@@ -171,3 +171,4 @@ class GPIBCommand:
         """
         command = "FMT"
         command += " " + "," + str(format) + ',' + str(mode)
+        self.communication.send_command(command)

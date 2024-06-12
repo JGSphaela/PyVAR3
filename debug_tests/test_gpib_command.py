@@ -12,7 +12,7 @@ def test_gpib_command():
     gpib_command.enable_channels([1, 2, 3])
 
     # Test disabling channels
-    gpib_command.disable_channels([1, 2, 3])
+    gpib_command.disable_channels([2, 3, 4])
 
     # Test setting voltage sweep
     gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=5.0, step=0.1, icomp=0.01)
@@ -25,6 +25,14 @@ def test_gpib_command():
 
     # Test triggering measurement
     gpib_command.trigger_measurement()
+
+    # Wait for measurement complete
+    gpib_command.wait_pending()
+
+    # Read the return data
+    print(gpib_comm.read_response())
+
+    gpib_command.set_smu_mode(1,4)
 
 
 if __name__ == "__main__":

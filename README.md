@@ -9,4 +9,4 @@ This program was designed to run on all platforms, but the keysight OI suite onl
 
 ## Requirements
 PyVISA, PyQt6  
-(In the future)Matplotlib, pandas
+(In the future)Numpy, Matplotlib, pandas

@@ -136,3 +136,29 @@ class GPIBCommand:
         Triggers the B1500 to start measurement.
         """
         self.communication.send_command("XE")
+
+    def wait_pending(self) -> None:
+        """
+        Waits until pending operation is complete.
+        """
+        self.communication.send_command("*OPC?")
+
+    def reset_channel(self, channels: Optional[List[int]] = None) -> None:
+        """
+        Resets the channels used for measurements.
+        :param channels: A list of channel numbers to reset. If None, disables all channels.
+        """
+        command = "DZ"
+        if channels:
+            command += " " + ",".join(map(str, channels))
+        self.communication.send_command(command)
+
+    def set_smu_mode(self, channels: List[int], mode: int) -> None:
+        """
+        Sets the SMU measurement operation mode.
+        :param channels: SMU channel numbers.
+        :param mode: SMU measurement mode.
+        """
+        command = "CMM"
+        command += " " + ",".join(map(str, channels)) + ',' + mode
+        self.communication.send_command(command)

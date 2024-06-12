@@ -10,7 +10,7 @@ def test_gpib_command():
     gpib_comm.connect_device("GPIB0::17::INSTR")
 
     # Set output format
-    gpib_command.set_output_format(1, 1)
+    gpib_command.set_output_format(11, 1)
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -105,7 +105,7 @@ def test_gpib_command():
 
     # Read the return data
     # print(gpib_comm.read_response())
-    print(gpib_comm.read_ascii())
+    print(gpib_comm.read_response())
 
     # Query error
     gpib_command.query_error(mode=1)

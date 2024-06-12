@@ -15,14 +15,37 @@ def test_gpib_command():
     # Enable timer
     gpib_command.time_stamp(enable=True)
 
+    # Set filter
+    gpib_command.set_filter(True)
+
+    # Set sample averaging
+    gpib_command.set_averaging(10, 1)
+
     # Set measurement mode
     gpib_command.set_measurement_mode(16, [1])
 
+    # Set SMU measurement mode
+    gpib_command.set_smu_mode([1], 1)
+    gpib_command.set_smu_mode([2], 1)
+
+    # Set current measuring range
+    gpib_command.current_measurement_range(channel=1, current_range=-19)
+    gpib_command.current_measurement_range(channel=2, current_range=-19)
+
+    # Set sweep delay time
+    # gpib_command.sweep_delay(hold=0)
+
+    # Set auto abort
+    gpib_command.auto_abort(2, 1)
+
+    # Query error
+    gpib_command.query_error(mode=1)
+
     # Test enabling channels
-    gpib_command.enable_channels([1, 2])
+    # gpib_command.enable_channels([1, 2])
 
     # Test disabling channels
-    gpib_command.disable_channels([3, 4])
+    # gpib_command.disable_channels([3, 4])
 
     # Test setting voltage sweep
     gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=0.5, icomp=0.01)
@@ -41,6 +64,9 @@ def test_gpib_command():
 
     # Wait for measurement complete
     print(gpib_command.wait_pending())
+
+    # Query error
+    gpib_command.query_error(mode=1)
 
     print(gpib_command.number_of_measurements())
 

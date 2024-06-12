@@ -140,7 +140,7 @@ class GPIBCommand:
 
     def wait_pending(self) -> str:
         """
-        Waits until pending operation is complete.
+        [Query] Waits until pending operation is complete.
 
         :return:
         """
@@ -206,3 +206,79 @@ class GPIBCommand:
         if channels:
             command += " " + ",".join(map(str, channels))
         self.communication.send_command(command)
+
+    def set_filter(self, mode: bool = False, channels: Optional[List[int]] = None) -> None:
+        """
+        Sets the connection mode of a SMU filter for each channel.
+
+        :param mode: Status of the filter
+        :param channels: SMU channel number.
+        """
+        command = f"FL {int(mode)}"
+        if channels:
+            command += " " + ",".join(map(str, channels))
+        self.communication.send_command(command)
+
+    def set_averaging(self, number: int = 1, mode: int = 0) -> None:
+        """
+        Sets the number of averaging samples. High-speed ADC only.
+
+        :param number: number of averaging samples.
+        :param mode: Averaging mode.
+        """
+        command = f"AV {number}"
+        if mode:
+            command += f",{mode}"
+        self.communication.send_command(command)
+
+    def current_measurement_range(self, channel: int, current_range: int) -> None:
+        """
+        Sets the current measurement range.
+
+        :param channel: SMU channel number.
+        :param current_range: Measurement range.
+        """
+        self.communication.send_command(f"RI {channel},{current_range}")
+
+    def sweep_delay(self, hold: float = 0, delay: float = 0, sdelay: Optional[float] = 0, tdelay: Optional[float] = 0,
+                    mdelay: Optional[float] = 0) -> None:
+        """
+        Sets the hold time, delay time, and step delay time for the staircase sweep or multichannel sweep measurement.
+
+        :param hold: Hold time in seconds.
+        :param delay: Delay time in seconds.
+        :param sdelay: Step delay time in seconds.
+        :param tdelay: Step source trigger delay time in seconds.
+        :param mdelay: Step measurement trigger delay time in seconds.
+        """
+        command = f"WT {hold},{delay}"
+        if sdelay:
+            command += f",{sdelay}"
+        if tdelay:
+            command += f",{tdelay}"
+        if mdelay:
+            command += f",{mdelay}"
+        self.communication.send_command(command)
+
+    def auto_abort(self, abort: int = 0, post: Optional[int] = 1) -> None:
+        """
+        Enables or disables automatic abort function.
+
+        :param abort: Automatic abort function mode.
+        :param post: Source output value after the measurement is normally completed.
+        """
+        command = f"WM {abort}"
+        if post is not None:
+            command += f",{post}"
+        self.communication.send_command(command)
+
+    def query_error(self, mode: Optional[int] = 0) -> str:
+        """
+        [Query] Query error code.
+
+        :param mode: Error code output mode.
+        """
+        command = "ERR?"
+        if mode:
+            command += f" {mode}"
+        return self.communication.query_response(command)

@@ -13,6 +13,15 @@ class GPIBCommand:
         """
         self.communication = communication
 
+    def init_connection(self, gpib_id: int = 17):
+        """
+        Initializes connection to the GPIB device.
+
+        :param gpib_id: gpib address of the GPIB device.
+        """
+        gpib_address = f"GPIB0::{gpib_id}::INSTR"
+        self.communication.connect_device(gpib_address)
+
     def enable_channels(self, channels: Optional[List[int]] = None) -> None:
         """
         Enables the specified channels.

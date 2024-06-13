@@ -3,7 +3,8 @@
 import pandas as pd
 import re
 
-class read_data_process:
+
+class DataProcess:
     def __init__(self, read_data: str):
         """
         Class for process data read from B1500.

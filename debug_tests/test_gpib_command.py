@@ -18,7 +18,7 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Enable timer
-    gpib_command.time_stamp(enable=True)
+    gpib_command.time_stamp(enable=False)
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -36,14 +36,13 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Set measurement mode
-    gpib_command.set_measurement_mode(16, [1])
+    gpib_command.set_measurement_mode(16, [1, 2, 3, 4])
 
     # Query error
     gpib_command.query_error(mode=1)
 
     # Set SMU measurement mode
-    gpib_command.set_smu_mode([1], 1)
-    gpib_command.set_smu_mode([2], 1)
+    gpib_command.set_smu_mode([1, 2, 3, 4], 1)
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -51,6 +50,8 @@ def test_gpib_command():
     # Set current measuring range
     gpib_command.current_measurement_range(channel=1, current_range=-19)
     gpib_command.current_measurement_range(channel=2, current_range=-19)
+    gpib_command.current_measurement_range(channel=3, current_range=-19)
+    gpib_command.current_measurement_range(channel=4, current_range=-19)
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -65,19 +66,22 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Test enabling channels
-    # gpib_command.enable_channels([1, 2])
+    gpib_command.enable_channels([1, 2, 3, 4])
 
     # Test disabling channels
     # gpib_command.disable_channels([3, 4])
 
     # Test setting voltage sweep
     gpib_command.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=20, icomp=0.01)
+    gpib_command.set_voltage_sweep(channel=2, mode=1, v_range=0, start=0.0, stop=1.0, step=20, icomp=0.01)
+    gpib_command.set_voltage_sweep(channel=3, mode=1, v_range=0, start=0.0, stop=1.0, step=20, icomp=0.01)
+    gpib_command.set_voltage_sweep(channel=4, mode=1, v_range=0, start=0.0, stop=1.0, step=20, icomp=0.01)
 
     # Query error
     gpib_command.query_error(mode=1)
 
     # Test forcing voltage
-    gpib_command.force_voltage(channel=2, v_range=0, voltage=1.0, icomp=0.01)
+    # gpib_command.force_voltage(channel=2, v_range=0, voltage=1.0, icomp=0.01)
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -106,8 +110,13 @@ def test_gpib_command():
     print(gpib_command.number_of_measurements())
 
     # Read the return data
-    # print(gpib_comm.read_response())
     print(gpib_comm.read_response())
+
+    # Query error
+    gpib_command.query_error(mode=1)
+
+    # Reset all channels
+    gpib_command.reset_channel()
 
     # Query error
     gpib_command.query_error(mode=1)

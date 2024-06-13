@@ -49,10 +49,15 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Set current measuring range
-    gpib_command.current_measurement_range(channel=1, current_range=-19)
-    gpib_command.current_measurement_range(channel=2, current_range=-19)
-    gpib_command.current_measurement_range(channel=3, current_range=-19)
-    gpib_command.current_measurement_range(channel=4, current_range=-19)
+    gpib_command.current_measurement_range(channel=1, current_range=0)
+    gpib_command.current_measurement_range(channel=2, current_range=0)
+    gpib_command.current_measurement_range(channel=3, current_range=0)
+    gpib_command.current_measurement_range(channel=4, current_range=0)
+
+    gpib_command.voltage_measurement_range(channel=1, voltage_range=0)
+    gpib_command.voltage_measurement_range(channel=2, voltage_range=0)
+    gpib_command.voltage_measurement_range(channel=3, voltage_range=0)
+    gpib_command.voltage_measurement_range(channel=4, voltage_range=0)
 
     # Query error
     gpib_command.query_error(mode=1)

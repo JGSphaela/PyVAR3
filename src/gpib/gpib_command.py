@@ -247,6 +247,15 @@ class GPIBCommand:
         """
         self.communication.send_command(f"RI {channel},{current_range}")
 
+    def voltage_measurement_range(self, channel: int, voltage_range: int) -> None:
+        """
+        Sets the current measurement range.
+
+        :param channel: SMU channel number.
+        :param voltage_range: Measurement range.
+        """
+        self.communication.send_command(f"RV {channel},{voltage_range}")
+
     def sweep_delay(self, hold: float = 0, delay: float = 0, sdelay: Optional[float] = 0, tdelay: Optional[float] = 0,
                     mdelay: Optional[float] = 0) -> None:
         """

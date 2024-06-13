@@ -5,13 +5,11 @@ from src.gpib.gpib_communication import GPIBCommunication
 
 
 class GPIBCommand:
-    def __init__(self, communication: GPIBCommunication):
+    def __init__(self):
         """
         Initializes the GPIBCommand class with a GPIBCommunication instance.
-
-        :param communication: An instance of GPIBCommunication for sending GPIB commands.
         """
-        self.communication = communication
+        self.communication = GPIBCommunication()
 
     def init_connection(self, gpib_id: int = 17):
         """

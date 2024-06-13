@@ -7,7 +7,7 @@ from src.gpib.gpib_command import GPIBCommand
 def test_gpib_command():
     gpib_comm = GPIBCommunication()
     gpib_command = GPIBCommand()
-    gpib_comm.connect_device("GPIB0::{gpib_id}::INSTR")
+    gpib_comm.connect_device("GPIB0::17::INSTR")
 
     # Initialize connection
     gpib_command.init_connection(gpib_id=17)

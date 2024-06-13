@@ -31,6 +31,7 @@ class GPIBCommunication:
 
         try:
             self.device = self.rm.open_resource(address)
+            self.device.timeout = None
             print(f"Connected to {address}")
         except pyvisa.VisaIOError as e:
             self.device = None

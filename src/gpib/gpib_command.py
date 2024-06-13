@@ -19,6 +19,7 @@ class GPIBCommand:
         """
         gpib_address = f"GPIB0::{gpib_id}::INSTR"
         self.communication.connect_device(gpib_address)
+        self.communication.device.timeout = None
 
     def enable_channels(self, channels: Optional[List[int]] = None) -> None:
         """
@@ -164,16 +165,14 @@ class GPIBCommand:
             command += " " + ",".join(map(str, channels))
         self.communication.send_command(command)
 
-    def set_smu_mode(self, channels: List[int], mode: int) -> None:
+    def set_smu_mode(self, channel: int, mode: int) -> None:
         """
         Sets the SMU measurement operation mode.
 
-        :param channels: SMU channel numbers.
+        :param channel: SMU channel numbers.
         :param mode: SMU measurement mode.
         """
-        command = "CMM"
-        command += " " + ",".join(map(str, channels)) + ',' + str(mode)
-        self.communication.send_command(command)
+        self.communication.send_command(f"CMM {channel},{mode}")
 
     def set_output_format(self, out_format: int, mode: int = None) -> None:
         """

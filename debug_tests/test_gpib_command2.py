@@ -100,9 +100,9 @@ def test_gpib_command():
                                           21, 0.01, None,
                                           1, 0, 1, None,
                                           None, None, 2,
-                                          0, 1, None,
+                                          0, 3, None,
                                           None, None, 3,
-                                          0, 1, None,
+                                          0, 4, None,
                                           None, None,)
 
     # Query error

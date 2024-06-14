@@ -34,6 +34,7 @@ class BasicTest:
                                    const3_current_range: Optional[int] = None) -> pd.DataFrame:
         # Pretest prep
         self.prep.pre_test_setup(gpib_id=gpib_device_id)
+        self.command.init_connection(gpib_device_id)
 
         # Get all in-use channels
         all_channels = [sweep_channel]

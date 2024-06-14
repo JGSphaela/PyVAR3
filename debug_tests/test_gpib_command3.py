@@ -14,9 +14,9 @@ def test_gpib_command():
                                      1.0, 11, None,
                                      None, 3, 0, 0.0,
                                      2.0, 5, None, 1,
-                                     None, 1.0, None,
+                                     0, 1.0, None,
                                      None, None, 4,
-                                     None, 1.2, None,
+                                     0, 1.2, None,
                                      None, None))
 
 

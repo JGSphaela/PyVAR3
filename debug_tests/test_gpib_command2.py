@@ -99,10 +99,10 @@ def test_gpib_command():
     basic_test.multichannel_sweep_voltage(17, 2, 1, 0, 0.0, 1.0,
                                           21, 0.01, None,
                                           1, 0, 1, None,
-                                          None, None, 2,
-                                          0, 3, None,
                                           None, None, 3,
-                                          0, 4, None,
+                                          0, 1, None,
+                                          None, None, 4,
+                                          0, 1, None,
                                           None, None,)
 
     # Query error

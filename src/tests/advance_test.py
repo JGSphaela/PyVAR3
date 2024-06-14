@@ -26,7 +26,7 @@ class AdvanceTest:
                       const2_current_compliance: Optional[float] = None,
                       const2_current_compliance_polarity: Optional[float] = None,
                       const2_current_range: Optional[int] = None) -> pd.DataFrame:
-        step_value = (sweep2_stop - sweep2_start) / sweep1_step
+        step_value = (sweep2_stop - sweep2_start) / sweep2_step
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         result = pd.DataFrame()
         for step in range(0, sweep2_step + 1):

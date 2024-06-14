@@ -55,9 +55,6 @@ class AdvanceTest:
                                                                      const3_current_compliance_polarity=const2_current_compliance_polarity,
                                                                      const3_current_range=const2_current_range)
             step_result[sweep2_column_name] = step_voltage
-            if not step:
-                result = step_result
-            else:
-                result = pd.concat([result, step_result], ignore_index=True)
+            result = pd.concat([result, step_result], ignore_index=True)
 
         return result

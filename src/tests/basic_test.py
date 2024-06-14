@@ -72,5 +72,4 @@ class BasicTest:
                                        comp_polarity=const3_current_compliance_polarity,
                                        i_range=const3_current_range)
 
-        self.prep.run_test()
-        return self.prep.post_test()
+        return self.prep.run_test(gpib_id=gpib_device_id)

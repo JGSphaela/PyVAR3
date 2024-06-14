@@ -96,7 +96,7 @@ def test_gpib_command():
     # gpib_command.force_voltage(channel=3, v_range=0, voltage=1.0, icomp=0.01)
     # gpib_command.force_voltage(channel=4, v_range=0, voltage=1.0, icomp=0.01)
 
-    basic_test.multichannel_sweep_voltage(2, 1, 0, 0.0, 1.0,
+    basic_test.multichannel_sweep_voltage(17, 2, 1, 0, 0.0, 1.0,
                                           21, 0.01, None,
                                           1, 0, 1, None,
                                           None, None, 2,

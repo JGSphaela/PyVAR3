@@ -1,4 +1,5 @@
 # src/tests/advance_tset.py
+import pandas as pd
 
 from src.data_process.read_data_process import DataProcess
 from src.tests.basic_test import BasicTest
@@ -24,9 +25,10 @@ class AdvanceTest:
                       const2_range: Optional[int] = None, const2_voltage: Optional[float] = None,
                       const2_current_compliance: Optional[float] = None,
                       const2_current_compliance_polarity: Optional[float] = None,
-                      const2_current_range: Optional[int] = None):
+                      const2_current_range: Optional[int] = None) -> pd.DataFrame:
         step_value = (sweep2_stop - sweep2_start) / sweep1_step
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
+        result = pd.DataFrame()
         for step in range(0, sweep2_step + 1):
             step_voltage = 0.0 + step * step_value
             result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
@@ -53,3 +55,5 @@ class AdvanceTest:
                                                                 const3_current_compliance_polarity=const2_current_compliance_polarity,
                                                                 const3_current_range=const2_current_range)
             result[sweep2_column_name] = step_voltage
+
+        return result

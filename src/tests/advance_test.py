@@ -26,6 +26,7 @@ class AdvanceTest:
                       const2_current_compliance_polarity: Optional[float] = None,
                       const2_current_range: Optional[int] = None):
         step_value = (sweep2_stop - sweep2_start) / sweep1_step
+        sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         for step in range(0, sweep2_step + 1):
             step_voltage = 0.0 + step * step_value
             result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
@@ -51,3 +52,4 @@ class AdvanceTest:
                                                                 const3_current_compliance=const2_current_compliance,
                                                                 const3_current_compliance_polarity=const2_current_compliance_polarity,
                                                                 const3_current_range=const2_current_range)
+            result[sweep2_column_name] = step_voltage

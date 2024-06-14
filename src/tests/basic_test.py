@@ -8,7 +8,7 @@ class BasicTest:
     def __init__(self):
         self.command = GPIBCommand()
 
-    def multichannel_sweep_voltage(self, sweep_channel: int = 1, sweep_mode: int = 1,
+    def multichannel_sweep_voltage(self, gpib_device_id: int = 17, sweep_channel: int = 1, sweep_mode: int = 1,
                                    sweep_range: int = 0, sweep_start: float = 0.0, sweep_stop: float = 0.0,
                                    sweep_step: int = 0, sweep_current_compliance: Optional[float] = None,
                                    sweep_power_compliance: Optional[float] = None,
@@ -27,6 +27,9 @@ class BasicTest:
                                    const3_current_compliance: Optional[float] = None,
                                    const3_current_compliance_polarity: Optional[float] = None,
                                    const3_current_range: Optional[int] = None):
+        # Connect device
+        self.command.init_connection(gpib_device_id)
+
         # Get all in-use channels
         all_channels = [sweep_channel]
         if const1_channel is not None:

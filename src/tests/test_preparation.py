@@ -28,6 +28,7 @@ class TestPreparation():
             self.command.set_averaging(number=averaging_number, mode=averaging_mode)
 
     def run_test(self, auto_abort_enable: Optional[bool] = None):
+        self.command.init_connection(17)
         if auto_abort_enable:
             self.command.auto_abort(abort=2)
 
@@ -35,6 +36,7 @@ class TestPreparation():
         self.command.wait_pending()
 
     def post_test(self) -> pd.DataFrame:
+        self.command.init_connection(17)
         read_data = self.command.read_response()
         self.command.reset_channel()
         return self.data_process.data_into_dataframe(read_data)

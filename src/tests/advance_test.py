@@ -31,29 +31,30 @@ class AdvanceTest:
         result = pd.DataFrame()
         for step in range(0, sweep2_step + 1):
             step_voltage = 0.0 + step * step_value
-            result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
-                                                                sweep_channel=sweep1_channel,
-                                                                sweep_mode=sweep1_mode, sweep_range=sweep1_range,
-                                                                sweep_start=sweep1_start, sweep_stop=sweep1_stop,
-                                                                sweep_step=sweep1_step,
-                                                                sweep_current_compliance=sweep1_current_compliance,
-                                                                sweep_power_compliance=sweep1_power_compliance,
-                                                                const1_channel=sweep2_channel,
-                                                                const1_range=sweep2_range,
-                                                                const1_voltage=step_voltage,
-                                                                const1_current_compliance=sweep2_current_compliance,
-                                                                const2_channel=const1_channel,
-                                                                const2_range=const1_range,
-                                                                const2_voltage=const1_voltage,
-                                                                const2_current_compliance=const1_current_compliance,
-                                                                const2_current_compliance_polarity=const1_current_compliance_polarity,
-                                                                const2_current_range=const1_current_range,
-                                                                const3_channel=const2_channel,
-                                                                const3_range=const2_range,
-                                                                const3_voltage=const2_voltage,
-                                                                const3_current_compliance=const2_current_compliance,
-                                                                const3_current_compliance_polarity=const2_current_compliance_polarity,
-                                                                const3_current_range=const2_current_range)
-            result[sweep2_column_name] = step_voltage
+            step_result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
+                                                                     sweep_channel=sweep1_channel,
+                                                                     sweep_mode=sweep1_mode, sweep_range=sweep1_range,
+                                                                     sweep_start=sweep1_start, sweep_stop=sweep1_stop,
+                                                                     sweep_step=sweep1_step,
+                                                                     sweep_current_compliance=sweep1_current_compliance,
+                                                                     sweep_power_compliance=sweep1_power_compliance,
+                                                                     const1_channel=sweep2_channel,
+                                                                     const1_range=sweep2_range,
+                                                                     const1_voltage=step_voltage,
+                                                                     const1_current_compliance=sweep2_current_compliance,
+                                                                     const2_channel=const1_channel,
+                                                                     const2_range=const1_range,
+                                                                     const2_voltage=const1_voltage,
+                                                                     const2_current_compliance=const1_current_compliance,
+                                                                     const2_current_compliance_polarity=const1_current_compliance_polarity,
+                                                                     const2_current_range=const1_current_range,
+                                                                     const3_channel=const2_channel,
+                                                                     const3_range=const2_range,
+                                                                     const3_voltage=const2_voltage,
+                                                                     const3_current_compliance=const2_current_compliance,
+                                                                     const3_current_compliance_polarity=const2_current_compliance_polarity,
+                                                                     const3_current_range=const2_current_range)
+            step_result[sweep2_column_name] = step_voltage
+            result = pd.concat([result, step_result], ignore_index=True)
 
         return result

@@ -13,9 +13,9 @@ class TestPreparation():
         self.command = GPIBCommand()
         self.data_process = DataProcess()
 
-    def pre_test_setup(self, gpib_id: int, output_format: Optional[int], output_mode: Optional[int],
-                       time_stamp_enable: Optional[bool], smu_filter_enable: Optional[bool],
-                       averaging_number: Optional[int], averaging_mode: Optional[int]):
+    def pre_test_setup(self, gpib_id: int, output_format: Optional[int] = None, output_mode: Optional[int] = None,
+                       time_stamp_enable: Optional[bool] = None, smu_filter_enable: Optional[bool] = None,
+                       averaging_number: Optional[int] = None, averaging_mode: Optional[int] = None):
         self.command.init_connection(gpib_id)
 
         if output_format and output_mode:
@@ -27,7 +27,7 @@ class TestPreparation():
         if averaging_number and averaging_mode:
             self.command.set_averaging(number=averaging_number, mode=averaging_mode)
 
-    def run_test(self, auto_abort_enable: Optional[bool]):
+    def run_test(self, auto_abort_enable: Optional[bool] = None):
         if auto_abort_enable:
             self.command.auto_abort(abort=2)
 

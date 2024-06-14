@@ -45,11 +45,14 @@ class BasicTest:
         if const3_channel is not None:
             all_channels.append(const3_channel)
 
-        # Set measurement mode
-        self.command.set_measurement_mode(mode=16, channels=all_channels)
+        if const1_channel is not None or const2_channel is not None or const3_channel is not None:
+            all_channels = sorted(all_channels)
 
         # Enable channels
         self.command.enable_channels(all_channels)
+
+        # Set measurement mode
+        self.command.set_measurement_mode(mode=16, channels=all_channels)
 
         # Set voltage sweep
         self.command.set_voltage_sweep(channel=sweep_channel, mode=sweep_mode, v_range=sweep_range, start=sweep_start,

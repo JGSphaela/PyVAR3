@@ -5,7 +5,7 @@ from src.tests.basic_test import BasicTest
 from typing import Optional
 
 
-class AdvanceTest():
+class AdvanceTest:
     def __init__(self):
         self.basic_test = BasicTest()
 
@@ -43,13 +43,11 @@ class AdvanceTest():
                                                                 const2_range=const1_range,
                                                                 const2_voltage=const1_voltage,
                                                                 const2_current_compliance=const1_current_compliance,
-                                                                const2_current_compliance_polarity=
-                                                                const1_current_compliance_polarity,
+                                                                const2_current_compliance_polarity=const1_current_compliance_polarity,
                                                                 const2_current_range=const1_current_range,
                                                                 const3_channel=const2_channel,
                                                                 const3_range=const2_range,
                                                                 const3_voltage=const2_voltage,
                                                                 const3_current_compliance=const2_current_compliance,
-                                                                const3_current_compliance_polarity=
-                                                                const2_current_compliance_polarity,
+                                                                const3_current_compliance_polarity=const2_current_compliance_polarity,
                                                                 const3_current_range=const2_current_range)

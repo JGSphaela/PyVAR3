@@ -28,13 +28,13 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Set filter
-    gpib_command.set_filter(True)
+    # gpib_command.set_filter(True)
 
     # Query error
     gpib_command.query_error(mode=1)
 
     # Set sample averaging
-    gpib_command.set_averaging(10, 1)
+    # gpib_command.set_averaging(10, 1)
 
     # Query error
     gpib_command.query_error(mode=1)

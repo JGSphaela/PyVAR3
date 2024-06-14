@@ -11,7 +11,7 @@ def test_gpib_command():
     advance_test = AdvanceTest()
 
     print(advance_test.two_way_sweep(17, 2, 1, 0, 0.0,
-                                     1.0, 11, None,
+                                     1.0, 3, None,
                                      None, 3, 0, 0.0,
                                      2.0, 5, None, 1,
                                      0, 1.0, None,

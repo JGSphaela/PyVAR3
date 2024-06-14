@@ -22,7 +22,7 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Enable timer
-    gpib_command.time_stamp(enable=True)
+    gpib_command.time_stamp(enable=False)
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -40,7 +40,7 @@ def test_gpib_command():
     gpib_command.query_error(mode=1)
 
     # Set measurement mode
-    gpib_command.set_measurement_mode(16, [1, 2, 3, 4])
+    gpib_command.set_measurement_mode(2, [1, 2, 3, 4])
 
     # Query error
     gpib_command.query_error(mode=1)
@@ -84,7 +84,7 @@ def test_gpib_command():
     # gpib_command.disable_channels([3, 4])
 
     # Test setting voltage sweep
-    gpib_command.set_voltage_sweep(channel=2, mode=1, v_range=0, start=0.0, stop=1.0, step=20, icomp=0.01)
+    gpib_command.set_voltage_sweep(channel=2, mode=1, v_range=0, start=0.0, stop=1.0, step=21, icomp=0.01)
 
     # Query error
     gpib_command.query_error(mode=1)

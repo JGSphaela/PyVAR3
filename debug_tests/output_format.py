@@ -36,3 +36,40 @@ df = pd.DataFrame({'Status': status, 'Channel': channel, 'Data_Type': data_type,
 
 # Display the DataFrame
 print(df)
+
+
+# Sample DataFrame
+# data = {
+#     'Status': ['N', 'N', 'N', 'N', 'W', 'N', 'N', 'N', 'N', 'E'],
+#     'Channel': ['A', 'B', 'C', 'D', 'D', 'A', 'B', 'C', 'D', 'D'],
+#     'Data_Type': ['I', 'I', 'I', 'I', 'V', 'I', 'I', 'I', 'I', 'V'],
+#     'Value': [0.0, -5e-09, 0.0, 0.0, 0.0, -5e-09, 0.0, 0.0, 0.0, 1.0]
+# }
+#
+# df = pd.DataFrame(data)
+
+# Detect unique combinations of channels and data types
+unique_combinations = sorted(set(df['Channel'] + '_' + df['Data_Type']))
+
+# Initialize variables
+reshaped_data = []
+current_row = {}
+index = 0
+
+# Iterate over the DataFrame
+for _, row in df.iterrows():
+    if row['Status'] == 'E':
+        reshaped_data.append(current_row)
+        break
+    if row['Status'] == 'W':
+        reshaped_data.append(current_row)
+        current_row = {}
+        index += 1
+        continue
+    column_name = f"{row['Channel']}_{row['Data_Type']}"
+    current_row[column_name] = row['Value']
+
+# Convert the list of dictionaries to a DataFrame
+reshaped_df = pd.DataFrame(reshaped_data, columns=unique_combinations)
+
+print(reshaped_df)

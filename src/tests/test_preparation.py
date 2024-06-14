@@ -18,13 +18,13 @@ class TestPreparation():
                        averaging_number: Optional[int] = None, averaging_mode: Optional[int] = None):
         self.command.init_connection(gpib_id)
 
-        if output_format and output_mode:
+        if output_format is not None and output_mode is not None:
             self.command.set_output_format(out_format=output_format, mode=output_mode)
-        if time_stamp_enable:
+        if time_stamp_enable is not None:
             self.command.time_stamp(time_stamp_enable)
-        if smu_filter_enable:
+        if smu_filter_enable is not None:
             self.command.set_filter(mode=smu_filter_enable)
-        if averaging_number and averaging_mode:
+        if averaging_number is not None and averaging_mode is not None:
             self.command.set_averaging(number=averaging_number, mode=averaging_mode)
 
     def run_test(self, gpib_id, auto_abort_enable: Optional[bool] = None) -> pd.DataFrame:

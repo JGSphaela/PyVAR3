@@ -33,7 +33,7 @@ class BasicTest:
                                    const3_current_compliance_polarity: Optional[float] = None,
                                    const3_current_range: Optional[int] = None) -> pd.DataFrame:
         # Pretest prep
-        self.prep.pre_test_setup(gpib_id=gpib_device_id,averaging_number=3,averaging_mode=1)
+        self.prep.pre_test_setup(gpib_id=gpib_device_id,averaging_number=1,averaging_mode=0)
         self.command.init_connection(gpib_device_id)
 
         # Get all in-use channels

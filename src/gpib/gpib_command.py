@@ -174,7 +174,7 @@ class GPIBCommand:
         """
         self.communication.send_command(f"CMM {channel},{mode}")
 
-    def set_output_format(self, out_format: int, mode: int = None) -> None:
+    def set_output_format(self, out_format: int = 11, mode: int = None) -> None:
         """
         Sets the output format of the measurement.
 
@@ -297,3 +297,6 @@ class GPIBCommand:
         if mode:
             command += f" {mode}"
         return self.communication.query_response(command)
+
+    def read_response(self):
+        return self.communication.read_response()

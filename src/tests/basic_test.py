@@ -1,12 +1,17 @@
 # src/tests/basic_test.py
 
-from typing import List, Optional
+from typing import Optional
+
+import pandas as pd
+
 from src.gpib.gpib_command import GPIBCommand
+from src.tests.test_preparation import TestPreparation
 
 
 class BasicTest:
     def __init__(self):
         self.command = GPIBCommand()
+        self.prep = TestPreparation()
 
     def multichannel_sweep_voltage(self, gpib_device_id: int = 17, sweep_channel: int = 1, sweep_mode: int = 1,
                                    sweep_range: int = 0, sweep_start: float = 0.0, sweep_stop: float = 0.0,
@@ -26,9 +31,9 @@ class BasicTest:
                                    const3_range: Optional[int] = None, const3_voltage: Optional[float] = None,
                                    const3_current_compliance: Optional[float] = None,
                                    const3_current_compliance_polarity: Optional[float] = None,
-                                   const3_current_range: Optional[int] = None):
-        # Connect device
-        self.command.init_connection(gpib_device_id)
+                                   const3_current_range: Optional[int] = None) -> pd.DataFrame:
+        # Pretest prep
+        self.prep.pre_test_setup(gpib_id=gpib_device_id)
 
         # Get all in-use channels
         all_channels = [sweep_channel]
@@ -66,3 +71,6 @@ class BasicTest:
                                        icomp=const3_current_compliance,
                                        comp_polarity=const3_current_compliance_polarity,
                                        i_range=const3_current_range)
+
+        self.prep.run_test()
+        return self.prep.post_test()

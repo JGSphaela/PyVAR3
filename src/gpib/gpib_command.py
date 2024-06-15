@@ -300,3 +300,12 @@ class GPIBCommand:
 
     def read_response(self):
         return self.communication.read_response()
+
+    def set_adc_mode(self, adc_type: int, mode: int = 0, coefficient: Optional[int] = None):
+        command = f"AIT {adc_type},{mode}"
+        if coefficient is not None:
+            command += f",{coefficient}"
+        self.communication.send_command(command)
+
+    def set_adc_type(self, channel: int, adc_type: int):
+        self.communication.send_command(f"AAD {channel},{adc_type}")

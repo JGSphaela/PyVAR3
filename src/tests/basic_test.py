@@ -48,6 +48,12 @@ class BasicTest:
         if const1_channel is not None or const2_channel is not None or const3_channel is not None:
             all_channels = sorted(all_channels)
 
+        for channel in all_channels:
+            self.command.set_adc_type(channel=channel, adc_type=1)
+            self.command.set_adc_mode(adc_type=1, mode=0)
+            self.command.current_measurement_range(channel=channel, current_range=0)
+            self.command.voltage_measurement_range(channel=channel, voltage_range=0)
+
         # Enable channels
         self.command.enable_channels(all_channels)
 

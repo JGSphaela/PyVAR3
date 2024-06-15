@@ -1,4 +1,4 @@
-# debug_tests/test_gpib.py
+# debug_tests/gpib.py
 
 from src.gpib.gpib_communication import GPIBCommunication
 

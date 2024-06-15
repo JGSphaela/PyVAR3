@@ -1,4 +1,4 @@
-# tests/test_gpib_command.py
+# debug_tests/three_way_sweep.py
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication

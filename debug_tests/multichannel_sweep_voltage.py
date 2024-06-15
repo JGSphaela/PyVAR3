@@ -1,4 +1,4 @@
-# tests/test_gpib_command.py
+# debug_tests/multichannel_sweep_voltage.py
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication

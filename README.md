@@ -13,6 +13,8 @@ PyVISA, PyQt6, Numpy, Matplotlib, Pandas
 
 ## Progress
 
-Connection, data retrieve is complete. Now working on plot and create fundamental tests.
+Connection, data retrieve and 2-way sweep is complete. Now working on 3-way sweep.
+
+Need to solve the problem that _current measuring strat is too slow_.
 
 Will work on GUI after sweep function completed.

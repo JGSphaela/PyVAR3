@@ -29,7 +29,7 @@ class AdvanceTest:
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         result = pd.DataFrame()
         for step in range(0, sweep2_step):
-            step_voltage = 0.0 + step * step_value
+            step_voltage = sweep2_start + step * step_value
             step_result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
                                                                      sweep_channel=sweep1_channel,
                                                                      sweep_mode=sweep1_mode, sweep_range=sweep1_range,
@@ -79,9 +79,9 @@ class AdvanceTest:
         sweep2_result = pd.DataFrame()
         result = pd.DataFrame()
         for sweep3_step_index in range(0, sweep3_step):
-            sweep3_step_voltage = 0.0 + sweep3_step_index * sweep3_step_value
+            sweep3_step_voltage = sweep3_start + sweep3_step_index * sweep3_step_value
             for sweep2_step_index in range(0, sweep2_step):
-                sweep2_step_voltage = 0.0 + sweep2_step_index * sweep2_step_value
+                sweep2_step_voltage = sweep2_start + sweep2_step_index * sweep2_step_value
                 sweep2_step_result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
                                                                                 sweep_channel=sweep1_channel,
                                                                                 sweep_mode=sweep1_mode,

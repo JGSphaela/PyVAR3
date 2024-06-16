@@ -77,6 +77,7 @@ class AdvanceTest:
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         sweep3_column_name = f"{chr(sweep3_channel + 64)}_V"
         result = pd.DataFrame()
+        counter = 0
         for sweep3_step_index in range(0, sweep3_step):
             sweep3_step_voltage = round(sweep3_start + sweep3_step_index * sweep3_step_value, 6)
             sweep2_result = pd.DataFrame()
@@ -104,9 +105,11 @@ class AdvanceTest:
                                                                                 const3_voltage=const1_voltage,
                                                                                 const3_current_compliance=const1_current_compliance,
                                                                                 const3_current_compliance_polarity=const1_current_compliance_polarity,
-                                                                                const3_current_range=const1_current_range)
+                                                                                const3_current_range=const1_current_range,
+                                                                                counter=counter)
                 sweep2_step_result[sweep2_column_name] = sweep2_step_voltage
                 sweep2_result = pd.concat([sweep2_result, sweep2_step_result], ignore_index=True)
+                counter += 1
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage
             result = pd.concat([result, sweep2_result], ignore_index=True)

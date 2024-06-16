@@ -31,44 +31,45 @@ class BasicTest:
                                    const3_range: Optional[int] = None, const3_voltage: Optional[float] = None,
                                    const3_current_compliance: Optional[float] = None,
                                    const3_current_compliance_polarity: Optional[float] = None,
-                                   const3_current_range: Optional[int] = None) -> pd.DataFrame:
-        # Pretest prep
-        # note: FMT is needed to get sweep voltage output
-        self.command.init_connection(gpib_device_id)
-        self.command.set_output_format(11, 1)
+                                   const3_current_range: Optional[int] = None, counter: Optional[int] = None) -> pd.DataFrame:
+        if not counter:
+            # Pretest prep
+            # note: FMT is needed to get sweep voltage output
+            self.command.init_connection(gpib_device_id)
+            self.command.set_output_format(11, 1)
 
-        # Get all in-use channels
-        all_channels = [sweep_channel]
-        if const1_channel is not None:
-            all_channels.append(const1_channel)
-        if const2_channel is not None:
-            all_channels.append(const2_channel)
-        if const3_channel is not None:
-            all_channels.append(const3_channel)
+            # Get all in-use channels
+            all_channels = [sweep_channel]
+            if const1_channel is not None:
+                all_channels.append(const1_channel)
+            if const2_channel is not None:
+                all_channels.append(const2_channel)
+            if const3_channel is not None:
+                all_channels.append(const3_channel)
 
-        if const1_channel is not None or const2_channel is not None or const3_channel is not None:
-            all_channels = sorted(all_channels)
+            if const1_channel is not None or const2_channel is not None or const3_channel is not None:
+                all_channels = sorted(all_channels)
 
-        # for channel in all_channels:
-        #     self.command.set_adc_type(channel=channel, adc_type=1)
-        #
-        # self.command.set_adc_mode(adc_type=1, mode=1, coefficient=1)
-        #
-        # Set measurement mode
-        self.command.set_measurement_mode(mode=16, channels=all_channels)
-        #
-        # for channel in all_channels:
-        #     self.command.set_smu_mode(channel=channel, mode=0)
-        #     self.command.current_measurement_range(channel=channel, current_range=0)
-        #     self.command.voltage_measurement_range(channel=channel, voltage_range=0)
-        #
-        # Enable channels
-        self.command.enable_channels(all_channels)
+            # for channel in all_channels:
+            #     self.command.set_adc_type(channel=channel, adc_type=1)
+            #
+            # self.command.set_adc_mode(adc_type=1, mode=1, coefficient=1)
+            #
+            # Set measurement mode
+            self.command.set_measurement_mode(mode=16, channels=all_channels)
+            #
+            # for channel in all_channels:
+            #     self.command.set_smu_mode(channel=channel, mode=0)
+            #     self.command.current_measurement_range(channel=channel, current_range=0)
+            #     self.command.voltage_measurement_range(channel=channel, voltage_range=0)
+            #
+            # Enable channels
+            self.command.enable_channels(all_channels)
 
-        # Set voltage sweep
-        self.command.set_voltage_sweep(channel=sweep_channel, mode=sweep_mode, v_range=sweep_range, start=sweep_start,
-                                       stop=sweep_stop, step=sweep_step, icomp=sweep_current_compliance,
-                                       pcomp=sweep_power_compliance)
+            # Set voltage sweep
+            self.command.set_voltage_sweep(channel=sweep_channel, mode=sweep_mode, v_range=sweep_range, start=sweep_start,
+                                           stop=sweep_stop, step=sweep_step, icomp=sweep_current_compliance,
+                                           pcomp=sweep_power_compliance)
 
         # Set constant voltage
         if const1_channel is not None:

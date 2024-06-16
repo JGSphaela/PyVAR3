@@ -140,11 +140,13 @@ class GPIBCommand:
             command += "," + ",".join(map(str, channels))
         self.communication.send_command(command)
 
-    def trigger_measurement(self) -> None:
+    def trigger_measurement(self) -> str:
         """
-        Triggers the B1500 to start measurement.
+        [Query] Triggers the B1500 to start measurement.
+
+        :return:
         """
-        self.communication.send_command("XE")
+        return self.communication.query_response("XE")
 
     def wait_pending(self) -> str:
         """

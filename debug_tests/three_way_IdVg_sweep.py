@@ -19,7 +19,7 @@ def test_gpib_command():
                                           0, 0, 0.1,
                                           None, None)
 
-    result.to_csv('Nov_No17IdVg.csv', index=False)
+    result.to_csv('Jan_No3Vg.csv', index=False)
 
 
 if __name__ == "__main__":

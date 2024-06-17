@@ -111,7 +111,7 @@ class AdvanceTest:
                 sweep2_result = pd.concat([sweep2_result, sweep2_step_result], ignore_index=True)
                 counter += 1
                 print('---')
-                print(f'Progress: ({counter}/{(sweep3_step_index + 1) * (sweep2_step_index + 1)}) - {round(counter/(sweep3_step_index + 1) * (sweep2_step_index + 1) * 100, 2)}% done!')
+                print(f'Progress: ({counter}/{sweep3_step * sweep2_step}) - {round(counter / (sweep3_step * sweep2_step) * 100, 2)}% done!')
                 print('---')
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage

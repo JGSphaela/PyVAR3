@@ -10,7 +10,7 @@ import os
 def create_plot():
     # Load the data
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(script_dir, '../../debug_tests/Nov_No17IdVg.csv')
+    data_path = os.path.join(script_dir, '../../debug_tests/Jan_No3Vg.csv')
     data = pd.read_csv(data_path)
 
     # Extract unique values for the sweeps

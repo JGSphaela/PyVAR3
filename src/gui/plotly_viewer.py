@@ -5,10 +5,13 @@ import matplotlib.pyplot as plt
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 import plotly.io as pio
+import os
 
 def create_plot():
     # Load the data
-    data = pd.read_csv('your_data.csv')
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(script_dir, '../../debug_tests/Nov_No17IdVg.csv')
+    data = pd.read_csv(data_path)
 
     # Extract unique values for the sweeps
     sub_v_values = data['Sub_V'].unique()

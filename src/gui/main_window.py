@@ -1,11 +1,8 @@
-# src/gui/main_window.py
-
 from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox
 from PyQt6.QtCore import Qt
 from src.gpib.gpib_communication import GPIBCommunication
 from src.utils.helper import load_translations
 from src.gui.plotly_viewer import PlotlyViewer
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -56,10 +53,12 @@ class MainWindow(QMainWindow):
         self.result_tab.setLayout(layout)
 
     def init_language_selection(self):
+        language_label = QLabel(self.translations["language_label"])
         language_dropdown = QComboBox()
         language_dropdown.addItems(["English", "日本語"])
         language_dropdown.currentIndexChanged.connect(self.change_language)
 
+        self.tabs.setCornerWidget(language_label, Qt.Corner.TopLeftCorner)
         self.tabs.setCornerWidget(language_dropdown, Qt.Corner.TopRightCorner)
 
     def change_language(self, index):
@@ -76,6 +75,7 @@ class MainWindow(QMainWindow):
         self.tabs.setTabText(2, self.translations["result_tab"])
         self.tabs.setTabText(3, self.translations["console_tab"])
         self.test_button.setText(self.translations["test_connection_button"])
+        self.plot_button.setText("Show 3D Plot")
 
     def check_gpib_init(self):
         if not self.gpib_comm.rm:
@@ -93,6 +93,10 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Success", self.translations["success_message"])
         except Exception as e:
             self.show_error(str(e))
+
+    def show_plotly_viewer(self):
+        self.plotly_viewer = PlotlyViewer(self)
+        self.plotly_viewer.show()
 
     def show_error(self, message):
         QMessageBox.critical(self, "Error", message)

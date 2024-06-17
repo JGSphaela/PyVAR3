@@ -1,0 +1,10 @@
+{
+    "setup_tab": "Setup",
+    "measurement_tab": "Measurement",
+    "result_tab": "Result",
+    "console_tab": "Console",
+    "test_connection_button": "Test Connection",
+    "success_message": "PyVISA ResourceManager initialized successfully!",
+    "error_message": "A ValueError occurred: ",
+    "language_label": "Language"
+}

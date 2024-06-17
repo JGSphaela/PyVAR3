@@ -1,42 +1,30 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
-# Read the CSV data
+# Load the data
 data = pd.read_csv('../../debug_tests/Nov_No17IdVg.csv')
 
-# Extract unique Sub_V values
-unique_sub_v = data['Sub_V'].unique()
+# Extract unique values for the sweeps
+sub_v_values = data['Sub_V'].unique()
+drain_v_values = data['Drain_V'].unique()
 
-# Plot Drain_I vs Gate_V for each Drain_V value and group by Sub_V
-plt.figure()
-for sub_v in unique_sub_v:
-    subset_sub_v = data[data['Sub_V'] == sub_v]
-    unique_drain_v = subset_sub_v['Drain_V'].unique()
-    for drain_v in unique_drain_v:
-        subset_drain_v = subset_sub_v[subset_sub_v['Drain_V'] == drain_v]
-        plt.plot(subset_drain_v['Gate_V'], subset_drain_v['Drain_I'], label=f'Sub_V={sub_v}, Drain_V={drain_v:.2f}')
-plt.xlabel('Gate_V (V)')
-plt.ylabel('Drain_I (A)')
-plt.title('Drain_I vs Gate_V for different Drain_V values and Sub_V values')
-plt.legend()
-plt.grid(True)
-plt.show()
-
-# 3D plot for each unique Sub_V
+# Create a 3D plot
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-for sub_v in unique_sub_v:
-    subset_sub_v = data[data['Sub_V'] == sub_v]
-    unique_drain_v = subset_sub_v['Drain_V'].unique()
-    for drain_v in unique_drain_v:
-        subset_drain_v = subset_sub_v[subset_sub_v['Drain_V'] == drain_v]
-        ax.plot(subset_drain_v['Gate_V'], subset_drain_v['Drain_I'], subset_drain_v['Drain_V'], label=f'Sub_V={sub_v:.2f}, Drain_V={drain_v:.2f}')
+# Create a color map
+colors = plt.cm.viridis(np.linspace(0, 1, len(drain_v_values)))
 
-ax.set_xlabel('Gate_V (V)')
-ax.set_ylabel('Drain_I (A)')
-ax.set_zlabel('Drain_V (V)')
-ax.set_title('3D Plot of Drain_I vs Gate_V and Drain_V with Sub_V')
-ax.legend()
+for j, sub_v in enumerate(sub_v_values):
+    sub_v_data = data[data['Sub_V'] == sub_v]
+    for drain_v in enumerate(drain_v_values):
+        drain_v_data = sub_v_data[sub_v_data['Drain_V'] == drain_v]
+        ax.plot(drain_v_data['Gate_V'], [sub_v] * len(drain_v_data), drain_v_data['Drain_I'], color=colors[j])
+
+ax.set_xlabel('Gate_V')
+ax.set_ylabel('Sub_V')
+ax.set_zlabel('Drain_I')
+ax.set_title('3D Plot of Drain_I vs Gate_V and Sub_V for different Drain_V values')
+
 plt.show()

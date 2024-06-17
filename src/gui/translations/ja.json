@@ -1,0 +1,10 @@
+{
+    "setup_tab": "セットアップ",
+    "measurement_tab": "測定",
+    "result_tab": "結果",
+    "console_tab": "コンソール",
+    "test_connection_button": "接続テスト",
+    "success_message": "PyVISA ResourceManagerの初期化に成功しました！",
+    "error_message": "ValueErrorが発生しました: ",
+    "language_label": "言語"
+}

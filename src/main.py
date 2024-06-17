@@ -7,5 +7,6 @@ if __name__ == "__main__":
 
     window = MainWindow()
     window.show()
+    window.show_error('junp scare')
 
     sys.exit(app.exec())

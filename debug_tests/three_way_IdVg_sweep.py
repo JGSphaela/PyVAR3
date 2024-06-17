@@ -11,11 +11,11 @@ def test_gpib_command():
     advance_test = AdvanceTest()
 
     result = advance_test.three_way_sweep(17, 2, 1, 0, 0.0,
-                                          -0.8, 81, 0.1,
+                                          -0.8, 41, 0.1,
                                           None, 1, 0, 0.0,
-                                          -0.8, 9, 0.01, 4,
+                                          -0.8, 41, 0.1, 4,
                                           0, -0.4, 0.4,
-                                          9, 0.0001, 3,
+                                          41, 0.1, 3,
                                           0, 0, 0.1,
                                           None, None)
 

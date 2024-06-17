@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.console_tab, self.translations["console_tab"])
 
         self.init_setup_tab()
+        self.init_result_tab()
         self.init_language_selection()
 
     def init_setup_tab(self):

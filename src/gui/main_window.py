@@ -4,6 +4,8 @@ from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPush
 from PyQt6.QtCore import Qt
 from src.gpib.gpib_communication import GPIBCommunication
 from src.utils.helper import load_translations
+from src.gui.plotly_viewer import PlotlyViewer
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -43,13 +45,20 @@ class MainWindow(QMainWindow):
 
         self.setup_tab.setLayout(layout)
 
+    def init_result_tab(self):
+        layout = QVBoxLayout()
+
+        self.plot_button = QPushButton("Show 3D Plot")
+        self.plot_button.clicked.connect(self.show_plotly_viewer)
+        layout.addWidget(self.plot_button)
+
+        self.result_tab.setLayout(layout)
+
     def init_language_selection(self):
-        language_label = QLabel(self.translations["language_label"])
         language_dropdown = QComboBox()
         language_dropdown.addItems(["English", "日本語"])
         language_dropdown.currentIndexChanged.connect(self.change_language)
 
-        # self.tabs.setCornerWidget(language_label, Qt.Corner.TopLeftCorner)
         self.tabs.setCornerWidget(language_dropdown, Qt.Corner.TopRightCorner)
 
     def change_language(self, index):

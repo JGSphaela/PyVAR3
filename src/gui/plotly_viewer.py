@@ -63,22 +63,19 @@ def create_plot():
         title='3D Plot of Drain_I vs Gate_V and Sub_V for different Drain_V values'
     )
 
-    return fig
+    return pio.to_html(fig)
 
 class PlotlyViewer(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Plotly 3D Plot in PyQt6")
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 800, 600)
 
         layout = QVBoxLayout()
         self.browser = QWebEngineView()
 
         # Create the plot and convert to HTML
-        fig = create_plot()
-        html = pio.to_html(fig, full_html=False)
-
-        self.browser.setHtml(html)
+        self.browser.setHtml(create_plot())
 
         layout.addWidget(self.browser)
 

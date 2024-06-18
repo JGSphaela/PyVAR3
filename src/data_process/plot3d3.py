@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data
-data = pd.read_csv('../../debug_tests/Jan_No3Vg_2.csv')
+data = pd.read_csv('../../debug_tests/data/Jan_No3Vg_2.csv')
 
 # Extract unique values for the sweeps
 sub_v_values = data['Sub_V'].unique()

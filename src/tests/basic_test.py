@@ -90,6 +90,6 @@ class BasicTest:
 
         out_data = self.data_process.data_into_dataframe(self.command.trigger_measurement())
         if out_data.shape[0] != sweep_step:
-            out_data.to_csv('error_data.csv', index=False)
+            out_data.to_csv('data/error_data.csv', index=False)
             raise Exception('The number of output data is less than sweep step, an error may occurred')
         return out_data

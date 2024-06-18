@@ -115,6 +115,10 @@ class AdvanceTest:
                 print('---')
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage
+            if sweep2_result.shape[0] != (sweep1_step * sweep2_step):
+                sweep2_result.to_csv('error_data.csv', index=False)
+                raise Exception('The number of output data is less than sweep step, an error may occurred')
+            sweep2_result.to_csv('backup_data.csv', mode='a', header=False, index=False)
             result = pd.concat([result, sweep2_result], ignore_index=True)
 
         return result

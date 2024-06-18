@@ -45,19 +45,27 @@ class DataProcess:
         reshaped_data = []
         current_row = {}
         index = 0
+        counter = 0
 
         # Iterate over the DataFrame
         for _, row in df.iterrows():
             column_name = f"{row['Channel']}_{row['Data_Type']}"
             current_row[column_name] = row['Value']
 
-            if row['Status'] == 'E':
+            if counter > 5:
+                with open('error_input_data.txt', 'w') as file:
+                    file.write(data_read)
+                raise Exception('No Sweep Voltage in data, check FMT settings')
+            elif row['Status'] == 'E':
                 reshaped_data.append(current_row.copy())
                 break
             elif row['Status'] == 'W':
                 reshaped_data.append(current_row.copy())
                 current_row = {}
                 index += 1
+                counter = 0
+
+            counter += 1
 
         # Convert the list of dictionaries to a DataFrame
         reshaped_df = pd.DataFrame(reshaped_data, columns=unique_combinations)

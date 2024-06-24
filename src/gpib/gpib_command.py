@@ -57,6 +57,9 @@ class GPIBCommand:
         :param icomp: Current compliance (optional).
         :param pcomp: Power compliance (optional).
         """
+        if abs(stop) > 2:
+            raise Exception("Warning: Attempt to force high voltage on device.")
+
         command = f"WV {channel},{mode},{v_range},{start},{stop},{step}"
         if icomp is not None:
             command += f",{icomp}"
@@ -97,6 +100,10 @@ class GPIBCommand:
         :param comp_polarity: Polarity of current compliance (optional).
         :param i_range: Current compliance ranging type (optional).
         """
+
+        if abs(voltage) > 2:
+            raise Exception("Warning: Attempt to force high voltage on device.")
+
         command = f"DV {channel},{v_range},{voltage}"
         if icomp is not None:
             command += f",{icomp}"

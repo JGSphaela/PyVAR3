@@ -11,15 +11,15 @@ def test_gpib_command():
     advance_test = AdvanceTest()
 
     result = advance_test.three_way_sweep(17, 2, 1, 0, 0.0,
-                                          -0.8, 81, 0.1,
+                                          -1.2, 121, 0.1,
                                           None, 1, 0, 0.0,
-                                          -0.8, 81, 0.1, 4,
-                                          0, -0.4, 0.4,
-                                          81, 0.1, 3,
+                                          -1.2, 121, 0.1, 4,
+                                          0, -0.6, 0.6,
+                                          121, 0.1, 3,
                                           0, 0, 0.1,
                                           None, None)
 
-    result.to_csv('data/Jan_No3Vg.csv', index=False)
+    result.to_csv('data/Jan_No10Vg.csv', index=False)
 
 
 if __name__ == "__main__":

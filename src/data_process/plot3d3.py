@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data
-data = pd.read_csv('../../debug_tests/data/Jan_No3Vg_2.csv')
+data = pd.read_csv('../../debug_tests/data/Nov_No2VgVdVsub.csv')
 
 # Extract unique values for the sweeps
 sub_v_values = data['Sub_V'].unique()
@@ -17,7 +17,7 @@ fig = go.Figure()
 i_values = ['Drain_I', 'Gate_I', 'Source_I', 'Sub_I']
 
 # Create a color map
-colors = plt.cm.tab10(np.linspace(0, 1, len(sub_v_values)))
+colors = plt.cm.viridis(np.linspace(0, 1, len(sub_v_values)))
 
 # Add traces for each I value but set visibility to False initially
 for i_val in i_values:
@@ -43,15 +43,48 @@ for i_val in i_values:
     buttons.append(dict(label=i_val,
                         method='update',
                         args=[{'visible': visible},
-                              {'title': f'3D Plot of {i_val} vs Gate_V and Sub_V for different Drain_V values'}]))
+                              {'title': f'3D Plot of {i_val} vs Gate_V and Sub_V for different Drain_V values',
+                               'scene': {
+                                   'xaxis': {'title': 'Gate_V'},
+                                   'yaxis': {'title': 'Sub_V'},
+                                   'zaxis': {'title': i_val}
+                               }}]))
+
+# Add buttons to switch between linear and logarithmic scale for the z-axis
+log_button = dict(label='Log Z',
+                  method='relayout',
+                  args=[{'scene.zaxis.type': 'log'}])
+
+linear_button = dict(label='Linear Z',
+                     method='relayout',
+                     args=[{'scene.zaxis.type': 'linear'}])
 
 # Update layout with dropdown
 fig.update_layout(
-    updatemenus=[dict(active=0, buttons=buttons)],
+    updatemenus=[
+        dict(
+            buttons=buttons,
+            direction="down",
+            showactive=True,
+            # x=0.17,
+            xanchor="left",
+            # y=1.15,
+            yanchor="top"
+        ),
+        dict(
+            buttons=[linear_button,log_button],
+            direction="down",
+            showactive=True,
+            # x=0.57,
+            xanchor="right",
+            # y=1.15,
+            yanchor="top"
+        )
+    ],
     scene=dict(
-        xaxis_title='Gate_V',
-        yaxis_title='Sub_V',
-        zaxis_title='Drain_I'  # Default z-axis title, will change with dropdown
+        xaxis=dict(title='Gate_V'),
+        yaxis=dict(title='Sub_V'),
+        zaxis=dict(title='Drain_I')  # Default z-axis title, will change with dropdown
     ),
     title='3D Plot of Drain_I vs Gate_V and Sub_V for different Drain_V values'
 )

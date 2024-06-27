@@ -50,8 +50,8 @@ class BasicTest:
             if const1_channel is not None or const2_channel is not None or const3_channel is not None:
                 all_channels = sorted(all_channels)
 
-            # for channel in all_channels:
-            #     self.command.set_adc_type(channel=channel, adc_type=1)
+            for channel in all_channels:
+                self.command.set_adc_type(channel=channel, adc_type=1)
             #
             # self.command.set_adc_mode(adc_type=1, mode=1, coefficient=1)
             #

@@ -11,6 +11,7 @@ def test_gpib_command():
     device_id = 2
     temperature_k = 300
     sweep_parameter = '\n#    Vg:[0V ~ 0.8V steps:41]\n#    Vd:[0V ~ 0.8V steps:41]\n#    Vsub:[0V ~ -0.8V steps:41]'
+    const_parameter = '\n#    Vsource:[0V]\n#    VDD:[0V]\n#    GND:[0V]'
 
     start_time = datetime.now()
     date = start_time.strftime('%Y-%m-%d')
@@ -33,6 +34,7 @@ def test_gpib_command():
         'Measured Device: ' + measured_device,
         'Device ID: ' + str(device_id),
         'Sweeping Parameter: ' + sweep_parameter,
+        'Constant Parameter: ' + const_parameter,
         'Start Time: ' + start_time_formatted,
         'End Time: ' + end_time_formatted,
         'Temperature: ' + str(temperature_k),

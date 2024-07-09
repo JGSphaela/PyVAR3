@@ -9,7 +9,8 @@ This program was designed to run on all platforms, but the keysight IO suite onl
 
 ## Requirements
 
-PyVISA, PyQt6, Numpy, Matplotlib, Pandas
+PyVISA, ~~PyQt6~~ _PySide6_, Numpy, Matplotlib, Pandas
+Currently immigrating from PyQt6 to PySide6
 
 ## Progress
 

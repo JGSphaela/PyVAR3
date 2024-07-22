@@ -9,7 +9,7 @@ def test_gpib_command():
     output_file_path = 'data/Nov_No18VgVdVsub_cryo.csv'
     measured_device = '2023.11 TSMC 22nm TEG'
     device_id = 18
-    temperature_k = 6
+    temperature_k = 6.5
     sweep_parameter = '\n#    Vg:[0V ~ -0.8V steps:41]\n#    Vd:[0V ~ -0.8V steps:41]\n#    Vsub:[0V ~ 0.8V steps:41]'
     const_parameter = '\n#    Vsource:[0V]\n#    VDD:[Not Connected]\n#    GND:[-1V]'
 

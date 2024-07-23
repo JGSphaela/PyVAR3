@@ -1,3 +1,5 @@
+<img src="/src/logo.png" width="300" />
+
 # PyVAR3
 
 A small software for 3(or more) sweeping parameters measurements. WIP  

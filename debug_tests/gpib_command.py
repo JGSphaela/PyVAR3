@@ -1,8 +1,8 @@
-# debug_tests/gpib_command.py
+# debug_tests/gpib_command_b1500.py
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication
-from src.gpib.gpib_command import GPIBCommand
+from src.gpib.gpib_command_b1500 import GPIBCommand
 
 
 def test_gpib_command():

@@ -1,4 +1,5 @@
-# src/gpib/gpib_command.py
+# src/gpib/gpib_command_b1500.py
+# This file implemented B1500A/B1505A/B1506A/B1507A GPIB commands.
 
 from typing import List, Optional
 from src.gpib.gpib_communication import GPIBCommunication
@@ -198,7 +199,7 @@ class GPIBCommand:
         """
         [Query] Query the number of measurements.
 
-        :return:
+        :return: The number of measurements.
         """
         return self.communication.query_response("NUB?")
 
@@ -318,3 +319,21 @@ class GPIBCommand:
 
     def set_adc_type(self, channel: int, adc_type: int):
         self.communication.send_command(f"AAD {channel},{adc_type}")
+
+    def set_wait_time(self, wait_type: int, coefficient: float = 1, offset: Optional[float] = 0):
+        """
+        Sets the source wait time and the measurement wait time.
+
+        :param wait_type: Type of the wait time. Integer expression. 1, 2 or 3.
+            1 - SMU source wait time (before changing the output value).
+            2 - SMU measurement wait time (before starting the measurement).
+            3 - MFCMU measurement wait time (before starting the measurement).
+        :param coefficient: Coefficient for initial wait time. Numeric expression.
+            0 to 10, resolution 0.1. Initial setting is 1.
+        :param offset: Offset for the wait time. Numeric expression.
+            0 to 1 sec, resolution 0.0001. Default setting is 0.
+        """
+        command = f"WAT {wait_type},{coefficient}"
+        if offset is not None:
+            command += f",{offset}"
+        self.communication.send_command(command)

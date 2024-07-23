@@ -4,7 +4,7 @@ from typing import Optional
 
 import pandas as pd
 
-from src.gpib.gpib_command import GPIBCommand
+from src.gpib.gpib_command_b1500 import GPIBCommand
 from src.data_process.read_data_process import DataProcess
 
 

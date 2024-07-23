@@ -2,7 +2,7 @@
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication
-from src.gpib.gpib_command import GPIBCommand
+from src.gpib.gpib_command_b1500 import GPIBCommand
 from src.tests.basic_test import BasicTest
 
 

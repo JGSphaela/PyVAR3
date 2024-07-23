@@ -23,6 +23,7 @@ class MainWindow(QMainWindow):
         # Help Menu
         help_menu = menu_bar.addMenu("Help")
         about_menu = help_menu.addAction("About")
+        about_menu.triggered.connect(self.about_app)
 
         # Status Bar
         self.setStatusBar(QStatusBar(self))

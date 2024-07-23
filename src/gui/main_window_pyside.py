@@ -1,5 +1,7 @@
-from PySide6.QtWidgets import QMainWindow, QStatusBar
+from PySide6.QtWidgets import QMainWindow, QStatusBar, QMessageBox
 
+from src.gui import sweep_window
+from src.gui.sweep_window import SweepWindow
 
 class MainWindow(QMainWindow):
     def __init__(self, app):
@@ -24,6 +26,13 @@ class MainWindow(QMainWindow):
 
         # Status Bar
         self.setStatusBar(QStatusBar(self))
+        self.statusBar().showMessage("Waiting for Measurement")
+
+        self.sweep_window = SweepWindow()
+        self.setCentralWidget(self.sweep_window)
 
     def quit_app(self):
         self.app.quit()
+
+    def about_app(self):
+        ret = QMessageBox.about(self, "About", "PyVAR3 GUI")

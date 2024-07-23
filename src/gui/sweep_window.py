@@ -8,8 +8,8 @@ class SweepWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        sweep_count = 1
-        sweep_widget = SweepWidgetGroup(sweep_count=sweep_count)
+        self.sweep_count = 1
+        self.sweep_widget = SweepWidgetGroup(sweep_count=self.sweep_count)
 
         running_status = QLabel("Ready")
         running_status.setFont(QFont("Arial", 20, QFont.Weight.Bold))
@@ -23,16 +23,33 @@ class SweepWindow(QWidget):
         start_stop_button = QPushButton("Start")
         start_stop_button.setCheckable(True)
 
+        self.add_sweep_button = QPushButton("Add Sweep Channel")
+        self.add_sweep_button.clicked.connect(self.add_sweep_channel)
+
         h_layout = QHBoxLayout()
         h_layout.addWidget(running_status)
         h_layout.addWidget(progress_bar)
         # h_layout.addStretch()
         h_layout.addWidget(start_stop_button)
 
-        v_layout = QVBoxLayout()
-        v_layout.addLayout(h_layout)
-        v_layout.addWidget(sweep_widget)
+        self.v_layout = QVBoxLayout()
+        self.v_layout.addLayout(h_layout)
+        self.v_layout.addWidget(self.sweep_widget)
+        self.v_layout.addWidget(self.add_sweep_button)
 
         h_layout.setContentsMargins(20, 0, 20, 0)
 
-        self.setLayout(v_layout)
+        self.setLayout(self.v_layout)
+
+    def add_sweep_channel(self):
+        self.sweep_count += 1
+
+        # Remove the existing SweepWidgetGroup and add a new one with the updated sweep_count
+        self.v_layout.removeWidget(self.sweep_widget)
+        self.sweep_widget.deleteLater()  # Remove the old widget from the layout
+        self.sweep_widget = SweepWidgetGroup(sweep_count=self.sweep_count)
+        self.v_layout.insertWidget(1, self.sweep_widget)  # Insert the new widget back in the layout
+
+        if self.sweep_count == 4:
+            self.v_layout.removeWidget(self.add_sweep_button)
+            self.add_sweep_button.deleteLater()

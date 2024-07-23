@@ -8,7 +8,8 @@ class SweepWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        sweep_widget = SweepWidgetGroup(4)
+        sweep_count = 1
+        sweep_widget = SweepWidgetGroup(sweep_count=sweep_count)
 
         running_status = QLabel("Ready")
         running_status.setFont(QFont("Arial", 20, QFont.Weight.Bold))
@@ -16,10 +17,11 @@ class SweepWindow(QWidget):
 
         progress_bar = QProgressBar()
         progress_bar.setRange(0, 100)
-        progress_bar.setValue(0)
+        progress_bar.setValue(50)
         progress_bar.setTextVisible(True)
 
         start_stop_button = QPushButton("Start")
+        start_stop_button.setCheckable(True)
 
         h_layout = QHBoxLayout()
         h_layout.addWidget(running_status)

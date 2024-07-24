@@ -25,9 +25,11 @@ class AdvanceTest:
                       const2_current_compliance: Optional[float] = None,
                       const2_current_compliance_polarity: Optional[float] = None,
                       const2_current_range: Optional[int] = None) -> pd.DataFrame:
+
         step_value = (sweep2_stop - sweep2_start) / (sweep2_step - 1)
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         result = pd.DataFrame()
+
         for step in range(0, sweep2_step):
             step_voltage = round(sweep2_start + step * step_value, 6)
             step_result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
@@ -72,12 +74,14 @@ class AdvanceTest:
                         const1_current_compliance: Optional[float] = None,
                         const1_current_compliance_polarity: Optional[float] = None,
                         const1_current_range: Optional[int] = None) -> pd.DataFrame:
+
         sweep2_step_value = (sweep2_stop - sweep2_start) / (sweep2_step - 1)
         sweep3_step_value = (sweep3_stop - sweep3_start) / (sweep3_step - 1)
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         sweep3_column_name = f"{chr(sweep3_channel + 64)}_V"
         result = pd.DataFrame()
         counter = 0
+
         for sweep3_step_index in range(0, sweep3_step):
             sweep3_step_voltage = round(sweep3_start + sweep3_step_index * sweep3_step_value, 6)
             sweep2_result = pd.DataFrame()
@@ -115,6 +119,7 @@ class AdvanceTest:
                 print('---')
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage
+
             if sweep2_result.shape[0] != (sweep1_step * sweep2_step):
                 sweep2_result.to_csv('data/error_data.csv', index=False)
                 raise Exception('The number of output data is less than sweep step, an error may occurred')

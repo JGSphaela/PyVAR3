@@ -31,12 +31,15 @@ class BasicTest:
                                    const3_range: Optional[int] = None, const3_voltage: Optional[float] = None,
                                    const3_current_compliance: Optional[float] = None,
                                    const3_current_compliance_polarity: Optional[float] = None,
-                                   const3_current_range: Optional[int] = None, counter: Optional[int] = None) -> pd.DataFrame:
+                                   const3_current_range: Optional[int] = None,
+                                   counter: Optional[int] = None) -> pd.DataFrame:
+
+        # a hack to make sure pretest commands are only send once.
         if not counter:
             # Pretest prep
             # note: FMT is needed to get sweep voltage output
             self.command.init_connection(gpib_device_id)
-            self.command.set_output_format(11, 1)
+            self.command.set_output_format(11, 1)  # FMT 11 ensures highest accuracy
 
             # Get all in-use channels
             all_channels = [sweep_channel]
@@ -71,6 +74,8 @@ class BasicTest:
                                            stop=sweep_stop, step=sweep_step, icomp=sweep_current_compliance,
                                            pcomp=sweep_power_compliance)
 
+            # End of pretest commands
+
         # Set constant voltage
         if const1_channel is not None:
             self.command.force_voltage(channel=const1_channel, v_range=const1_range, voltage=const1_voltage,
@@ -91,5 +96,6 @@ class BasicTest:
         out_data = self.data_process.data_into_dataframe(self.command.trigger_measurement())
         if out_data.shape[0] != sweep_step:
             out_data.to_csv('data/error_data.csv', index=False)
-            raise Exception('The number of output data is less than sweep step, an error may occurred')
+            raise Exception('The number of output data does not match the sweep step, an error may occurred')
+
         return out_data

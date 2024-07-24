@@ -3,6 +3,10 @@
 import pandas as pd
 import re
 
+'''
+FMT 11 should be used. Error status is not yet handled.
+'''
+
 
 class DataProcess:
     def __init__(self):
@@ -12,17 +16,14 @@ class DataProcess:
 
     @staticmethod
     def data_into_dataframe(data_read: str) -> pd.DataFrame:
-        # Split the string by commas
-        entries = data_read.split(',')
+        entries = data_read.split(',')  # Split input data
 
-        # Initialize lists to store the parsed data
         status = []
         channel = []
         data_type = []
         values = []
 
-        # Regular expression to parse the data entries
-        pattern = re.compile(r"([A-Z])([A-Z])([A-Z])([+-]\d+\.\d+E[+-]\d{2})")
+        pattern = re.compile(r'([A-Z])([A-Z])([A-Z])([+-]\d+\.\d+E[+-]\d{2})')  # Regex Magic
 
         for entry in entries:
             match = pattern.match(entry)
@@ -32,34 +33,30 @@ class DataProcess:
                 data_type.append(match.group(3))
                 values.append(float(match.group(4)))
 
-        # Create a DataFrame
         df = pd.DataFrame({'Status': status, 'Channel': channel, 'Data_Type': data_type, 'Value': values})
-
-        # Display the DataFrame
         print(df)
 
-        # Detect unique combinations of channels and data types
         unique_combinations = sorted(set(df['Channel'] + '_' + df['Data_Type']))
 
-        # Initialize variables
         reshaped_data = []
         current_row = {}
         index = 0
-        counter = 0
+        counter = 0  # Counter for checking FMT error
 
-        # Iterate over the DataFrame
         for _, row in df.iterrows():
             column_name = f"{row['Channel']}_{row['Data_Type']}"
             current_row[column_name] = row['Value']
 
+            # Check if we got more than 5 data in a row. Normally, it should be N Measurements and 1 Setting data.
+            # Since it there is only 4 channels, more than 5 data means FMT setting is bad.
             if counter > 5:
                 with open('error_input_data.txt', 'w') as file:
                     file.write(data_read)
                 raise Exception('No Sweep Voltage in data, check FMT settings')
-            elif row['Status'] == 'E':
+            elif row['Status'] == 'E':  # E means data for the last sweep step
                 reshaped_data.append(current_row.copy())
                 break
-            elif row['Status'] == 'W':
+            elif row['Status'] == 'W':  # W means data for intermediate sweep step
                 reshaped_data.append(current_row.copy())
                 current_row = {}
                 index += 1
@@ -67,7 +64,6 @@ class DataProcess:
 
             counter += 1
 
-        # Convert the list of dictionaries to a DataFrame
         reshaped_df = pd.DataFrame(reshaped_data, columns=unique_combinations)
 
         sorted_columns = sorted(

@@ -4,13 +4,13 @@ from typing import Optional
 
 import pandas as pd
 
-from src.gpib.gpib_command_b1500 import GPIBCommand
+from src.gpib.gpib_command_b1500 import B1500GPIBCommand
 from src.data_process.read_data_process import DataProcess
 
 
 class BasicTest:
     def __init__(self):
-        self.command = GPIBCommand()
+        self.command = B1500GPIBCommand()
         self.data_process = DataProcess()
 
     def multichannel_sweep_voltage(self, gpib_device_id: int = 17, sweep_channel: int = 1, sweep_mode: int = 1,

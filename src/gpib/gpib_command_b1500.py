@@ -5,7 +5,7 @@ from typing import List, Optional
 from src.gpib.gpib_communication import GPIBCommunication
 
 
-class GPIBCommand:
+class B1500GPIBCommand:
     def __init__(self):
         """
         Initializes the GPIBCommand class with a GPIBCommunication instance.

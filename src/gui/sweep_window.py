@@ -17,7 +17,7 @@ class SweepWindow(QWidget):
 
         progress_bar = QProgressBar()
         progress_bar.setRange(0, 100)
-        progress_bar.setValue(50)
+        progress_bar.setValue(0)
         progress_bar.setTextVisible(True)
 
         start_stop_button = QPushButton("Start")

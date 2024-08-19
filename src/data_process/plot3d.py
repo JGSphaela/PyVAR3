@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib.ticker import ScalarFormatter
 
 # Load the data
-data = pd.read_csv('../../debug_tests/data/Jan_No24Vg.csv')
+data = pd.read_csv('../../debug_tests/data/Jan_No16VgVdVsub.csv', comment='#')
 
 # Extract unique values for the sweeps
 sub_v_values = data['Sub_V'].unique()

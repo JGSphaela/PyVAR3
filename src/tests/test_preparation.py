@@ -4,13 +4,13 @@ from typing import Optional
 
 import pandas as pd
 
-from src.gpib.gpib_command_b1500 import GPIBCommand
+from src.gpib.gpib_command_b1500 import B1500GPIBCommand
 from src.data_process.read_data_process import DataProcess
 
 
 class TestPreparation():
     def __init__(self):
-        self.command = GPIBCommand()
+        self.command = B1500GPIBCommand()
         self.data_process = DataProcess()
 
     def pre_test_setup(self, gpib_id: int, output_format: Optional[int] = None, output_mode: Optional[int] = None,

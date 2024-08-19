@@ -2,12 +2,12 @@
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication
-from src.gpib.gpib_command_b1500 import GPIBCommand
+from src.gpib.gpib_command_b1500 import B1500GPIBCommand
 
 
 def test_gpib_command():
     gpib_comm = GPIBCommunication()
-    gpib_command = GPIBCommand()
+    gpib_command = B1500GPIBCommand()
     gpib_comm.connect_device("GPIB0::17::INSTR")
 
     gpib_comm.device.timeout = None

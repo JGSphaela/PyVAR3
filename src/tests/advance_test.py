@@ -1,4 +1,5 @@
 # src/tests/advance_tset.py
+import datetime
 import time
 
 import pandas as pd
@@ -88,6 +89,7 @@ class AdvanceTest:
         sweep3_column_name = f"{chr(sweep3_channel + 64)}_V"
         result = pd.DataFrame()
         counter = 0
+        total_step = sweep3_step * sweep2_step
         last_finish_time = time.time()
 
         for sweep3_step_index in range(0, sweep3_step):
@@ -129,9 +131,12 @@ class AdvanceTest:
                 sweep2_result = pd.concat([sweep2_result, sweep2_step_result], ignore_index=True)
                 counter += 1
                 duration = time.time() - last_finish_time
+                estimate_finish = datetime.datetime.fromtimestamp(time.time() + duration * (total_step - counter))
+                estimate_finish_str = estimate_finish.strftime("%Y-%m/%d %H:%M:%Sf")
                 print('---')
-                print(f'Progress: ({counter}/{sweep3_step * sweep2_step}) - {round(counter / (sweep3_step * sweep2_step) * 100, 2)}% done!')
-                print(f'last session took {duration} seconds!')
+                print(f'Progress: ({counter}/{total_step}) - {round(counter / (total_step) * 100, 2)}% done!')
+                print(f'last session took {duration:.2f} seconds!')
+                print(f'Estimated finish time: {estimate_finish_str}')
                 print('---')
                 last_finish_time = time.time()
 

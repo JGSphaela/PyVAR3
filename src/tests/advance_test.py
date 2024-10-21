@@ -131,7 +131,7 @@ class AdvanceTest:
                 duration = time.time() - last_finish_time
                 print('---')
                 print(f'Progress: ({counter}/{sweep3_step * sweep2_step}) - {round(counter / (sweep3_step * sweep2_step) * 100, 2)}% done!')
-                print(f(f'last session took {duration} seconds!'))
+                print(f'last session took {duration} seconds!')
                 print('---')
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage

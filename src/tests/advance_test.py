@@ -1,4 +1,6 @@
 # src/tests/advance_tset.py
+import time
+
 import pandas as pd
 
 from src.tests.basic_test import BasicTest
@@ -86,6 +88,7 @@ class AdvanceTest:
         sweep3_column_name = f"{chr(sweep3_channel + 64)}_V"
         result = pd.DataFrame()
         counter = 0
+        last_finish_time = 0
 
         for sweep3_step_index in range(0, sweep3_step):
             sweep3_step_voltage = round(sweep3_start + sweep3_step_index * sweep3_step_value, 6)
@@ -125,8 +128,10 @@ class AdvanceTest:
                 sweep2_step_result[sweep2_column_name] = sweep2_step_voltage
                 sweep2_result = pd.concat([sweep2_result, sweep2_step_result], ignore_index=True)
                 counter += 1
+                duration = time.time() - last_finish_time
                 print('---')
                 print(f'Progress: ({counter}/{sweep3_step * sweep2_step}) - {round(counter / (sweep3_step * sweep2_step) * 100, 2)}% done!')
+                print(f(f'last session took {duration} seconds!'))
                 print('---')
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage

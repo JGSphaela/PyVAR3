@@ -22,6 +22,13 @@ class B1500GPIBCommand:
         self.communication.connect_device(gpib_address)
         self.communication.device.timeout = None
 
+    def check_error(self):
+        command = "ERR?"
+        error = self.communication.query_response(command)
+
+        if error is not "0,0,0,0":
+            raise Exception("B1500 Error:" + error)
+
     def enable_channels(self, channels: Optional[List[int]] = None) -> None:
         """
         Enables the specified channels.

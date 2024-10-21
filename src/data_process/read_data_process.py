@@ -47,12 +47,12 @@ class DataProcess:
             column_name = f"{row['Channel']}_{row['Data_Type']}"
             current_row[column_name] = row['Value']
 
-            # Check if we got more than 5 data in a row. Normally, it should be N Measurements and 1 Setting data.
-            # Since it there is only 4 channels, more than 5 data means FMT setting is bad.
-            if counter > 5:
+            # Check if we got more than [module count] data in a row. Normally, it should be N Measurements and 1 Setting data.
+            # Since it there is only [module count] channels, more than [module count] data means FMT setting is bad.
+            if counter > 6:
                 with open('error_input_data.txt', 'w') as file:
                     file.write(data_read)
-                raise Exception('No Sweep Voltage in data, check FMT settings')
+                raise Exception('No Sweep Voltage in data or module setting wrong, check FMT and MM settings')
             elif row['Status'] == 'E':  # E means data for the last sweep step
                 reshaped_data.append(current_row.copy())
                 break

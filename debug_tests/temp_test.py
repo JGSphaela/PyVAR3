@@ -6,7 +6,7 @@ def temp_test():
     model_335_command = Model335GPIBCommand()
 
     model_335_command.init_connection()
-    temp = model_335_command.query_kelvin()
+    temp = model_335_command.query_celsius()
 
     return temp
 

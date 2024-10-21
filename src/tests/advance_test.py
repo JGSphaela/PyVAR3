@@ -136,7 +136,8 @@ class AdvanceTest:
                 print('---')
                 print(f'Progress: ({counter}/{total_step}) - {round(counter / (total_step) * 100, 2)}% done!')
                 print(f'last session took {duration:.2f} seconds!')
-                print(f'Estimated finish time: {estimate_finish_str}')
+                if counter != total_step:
+                    print(f'Estimated finish time: {estimate_finish_str}')
                 print('---')
                 last_finish_time = time.time()
 

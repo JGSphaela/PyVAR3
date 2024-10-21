@@ -26,7 +26,7 @@ class B1500GPIBCommand:
         command = "ERR?"
         error = self.communication.query_response(command)
 
-        if error is not "0,0,0,0":
+        if error != "0,0,0,0":
             raise Exception("B1500 Error:" + error)
 
     def enable_channels(self, channels: Optional[List[int]] = None) -> None:

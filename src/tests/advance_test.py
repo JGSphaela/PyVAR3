@@ -73,7 +73,12 @@ class AdvanceTest:
                         const1_range: Optional[int] = None, const1_voltage: Optional[float] = None,
                         const1_current_compliance: Optional[float] = None,
                         const1_current_compliance_polarity: Optional[float] = None,
-                        const1_current_range: Optional[int] = None) -> pd.DataFrame:
+                        const1_current_range: Optional[int] = None,
+                        const2_channel: Optional[int] = None,
+                        const2_range: Optional[int] = None, const2_voltage: Optional[float] = None,
+                        const2_current_compliance: Optional[float] = None,
+                        const2_current_compliance_polarity: Optional[float] = None,
+                        const2_current_range: Optional[int] = None) -> pd.DataFrame:
 
         sweep2_step_value = (sweep2_stop - sweep2_start) / (sweep2_step - 1)
         sweep3_step_value = (sweep3_stop - sweep3_start) / (sweep3_step - 1)
@@ -110,6 +115,12 @@ class AdvanceTest:
                                                                                 const3_current_compliance=const1_current_compliance,
                                                                                 const3_current_compliance_polarity=const1_current_compliance_polarity,
                                                                                 const3_current_range=const1_current_range,
+                                                                                const4_channel=const2_channel,
+                                                                                const4_range=const2_range,
+                                                                                const4_voltage=const2_voltage,
+                                                                                const4_current_compliance=const2_current_compliance,
+                                                                                const4_current_compliance_polarity=const2_current_compliance_polarity,
+                                                                                const4_current_range=const2_current_range,
                                                                                 counter=counter)
                 sweep2_step_result[sweep2_column_name] = sweep2_step_voltage
                 sweep2_result = pd.concat([sweep2_result, sweep2_step_result], ignore_index=True)
@@ -122,7 +133,8 @@ class AdvanceTest:
 
             if sweep2_result.shape[0] != (sweep1_step * sweep2_step):
                 sweep2_result.to_csv('data/error_data.csv', index=False)
-                raise Exception('The number of output data is less than sweep step, an error may occurred')
+                raise Exception('The number of output data is less than sweep step, an error may occurred.'
+                                'Check data/error_data.csv file.')
             sweep2_result.to_csv('data/backup_data.csv', mode='a', header=False, index=False)
             result = pd.concat([result, sweep2_result], ignore_index=True)
 

@@ -18,13 +18,15 @@ def test_gpib_command():
     start_time_formatted = start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
     result = advance_test.three_way_sweep(17, 2, 1, 0, 0.0,
-                                          1.2, 41, 0.01,
+                                          0.8, 3, 0.01,
                                           None, 1, 0, 0.0,
-                                          1.2, 41, 0.01, 4,
-                                          0, 0, -1.2,
-                                          41, 0.01, 3,
+                                          0.8, 3, 0.01, 4,
+                                          0, 0, -0.8,
+                                          3, 0.01, 3,
                                           0, 0, 0.01,
-                                          None, None)
+                                          None, None, 5, 0,
+                                          0.8, 0.01, None,
+                                          None)
 
     end_time = datetime.now()
     end_time_formatted = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]

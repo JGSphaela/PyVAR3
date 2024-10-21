@@ -32,6 +32,11 @@ class BasicTest:
                                    const3_current_compliance: Optional[float] = None,
                                    const3_current_compliance_polarity: Optional[float] = None,
                                    const3_current_range: Optional[int] = None,
+                                   const4_channel: Optional[int] = None,
+                                   const4_range: Optional[int] = None, const4_voltage: Optional[float] = None,
+                                   const4_current_compliance: Optional[float] = None,
+                                   const4_current_compliance_polarity: Optional[float] = None,
+                                   const4_current_range: Optional[int] = None,
                                    counter: Optional[int] = None) -> pd.DataFrame:
 
         # a hack to make sure pretest commands are only send once.
@@ -49,8 +54,10 @@ class BasicTest:
                 all_channels.append(const2_channel)
             if const3_channel is not None:
                 all_channels.append(const3_channel)
+            if const4_channel is not None:
+                all_channels.append(const4_channel)
 
-            if const1_channel is not None or const2_channel is not None or const3_channel is not None:
+            if const1_channel is not None or const2_channel is not None or const3_channel is not None or const4_channel is not None:
                 all_channels = sorted(all_channels)
 
             for channel in all_channels:
@@ -92,6 +99,11 @@ class BasicTest:
                                        icomp=const3_current_compliance,
                                        comp_polarity=const3_current_compliance_polarity,
                                        i_range=const3_current_range)
+        if const4_channel is not None:
+            self.command.force_voltage(channel=const4_channel, v_range=const4_range, voltage=const4_voltage,
+                                       icomp=const4_current_compliance,
+                                       comp_polarity=const4_current_compliance_polarity,
+                                       i_range=const4_current_range)
 
         out_data = self.data_process.data_into_dataframe(self.command.trigger_measurement())
         if out_data.shape[0] != sweep_step:

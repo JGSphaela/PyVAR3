@@ -132,7 +132,7 @@ class AdvanceTest:
                 counter += 1
                 duration = time.time() - last_finish_time
                 estimate_finish = datetime.datetime.fromtimestamp(time.time() + duration * (total_step - counter))
-                estimate_finish_str = estimate_finish.strftime('%Y-%m-%d %H:%M:%S.%f')[:-2]
+                estimate_finish_str = estimate_finish.strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]
                 print('---')
                 print(f'Progress: ({counter}/{total_step}) - {round(counter / (total_step) * 100, 2)}% done!')
                 print(f'last session took {duration:.2f} seconds!')

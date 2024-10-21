@@ -17,14 +17,14 @@ def test_gpib_command():
     date = start_time.strftime('%Y-%m-%d')
     start_time_formatted = start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
-    result = advance_test.three_way_sweep(17, 2, 1, 0, 0.0,
+    result = advance_test.three_way_sweep(17, 4, 1, 0, 0.0,
                                           0.8, 3, 0.01,
-                                          None, 1, 0, 0.0,
-                                          0.8, 3, 0.01, 4,
+                                          None, 3, 0, 0.0,
+                                          0.8, 3, 0.01, 6,
                                           0, 0, -0.8,
-                                          3, 0.01, 3,
+                                          3, 0.01, 5,
                                           0, 0, 0.01,
-                                          None, None, 5, 0,
+                                          None, None, 7, 0,
                                           0.8, 0.01, None,
                                           None)
 

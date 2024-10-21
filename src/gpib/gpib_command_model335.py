@@ -22,5 +22,4 @@ class Model335GPIBCommand:
         return self.communication.query_response("CRDG?")
 
     def query_kelvin(self):
-        kelvin = float(self.query_celsius()) + 273.15
-        return kelvin
+        return self.communication.query_response("KRDG?")

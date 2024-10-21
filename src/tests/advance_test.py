@@ -88,7 +88,7 @@ class AdvanceTest:
         sweep3_column_name = f"{chr(sweep3_channel + 64)}_V"
         result = pd.DataFrame()
         counter = 0
-        last_finish_time = 0
+        last_finish_time = time.time()
 
         for sweep3_step_index in range(0, sweep3_step):
             sweep3_step_voltage = round(sweep3_start + sweep3_step_index * sweep3_step_value, 6)
@@ -133,6 +133,7 @@ class AdvanceTest:
                 print(f'Progress: ({counter}/{sweep3_step * sweep2_step}) - {round(counter / (sweep3_step * sweep2_step) * 100, 2)}% done!')
                 print(f'last session took {duration} seconds!')
                 print('---')
+                last_finish_time = time.time()
 
             sweep2_result[sweep3_column_name] = sweep3_step_voltage
 

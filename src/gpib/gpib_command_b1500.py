@@ -30,6 +30,19 @@ class B1500GPIBCommand:
         else:
             print("B1500 OK")
 
+    # Call check_error everytime other function is called
+    def __getattribute__(self, name):
+        func = object.__getattribute__(self, name)
+        # Only modify methods (exclude check_error)
+        if callable(func) and name != 'check_error':
+            def wrapper(*args, **kwargs):
+                result = func(*args, **kwargs)  # Call the original function
+                self.check_error()
+                return result
+
+            return wrapper
+        return func
+
     def enable_channels(self, channels: Optional[List[int]] = None) -> None:
         """
         Enables the specified channels.

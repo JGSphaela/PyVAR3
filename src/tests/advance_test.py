@@ -91,6 +91,7 @@ class AdvanceTest:
         counter = 0
         total_step = sweep3_step * sweep2_step
         last_finish_time = time.time()
+        time_list = []
 
         for sweep3_step_index in range(0, sweep3_step):
             sweep3_step_voltage = round(sweep3_start + sweep3_step_index * sweep3_step_value, 6)
@@ -130,8 +131,15 @@ class AdvanceTest:
                 sweep2_step_result[sweep2_column_name] = sweep2_step_voltage
                 sweep2_result = pd.concat([sweep2_result, sweep2_step_result], ignore_index=True)
                 counter += 1
+
                 duration = time.time() - last_finish_time
-                estimate_finish = datetime.datetime.fromtimestamp(time.time() + duration * (total_step - counter))
+                time_list.append(duration)
+                if len(time_list) > 5:
+                    time_list.pop(0)
+
+                average_time = sum(time_list) / len(time_list)
+
+                estimate_finish = datetime.datetime.fromtimestamp(time.time() + average_time * (total_step - counter))
                 estimate_finish_str = estimate_finish.strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]
                 print('---')
                 print(f'Progress: ({counter}/{total_step}) - {round(counter / (total_step) * 100, 2)}% done!')

@@ -6,23 +6,23 @@ from datetime import datetime
 def test_gpib_command():
     advance_test = AdvanceTest()
 
-    output_file_path = 'data/Nov_No16VgVdVsub.csv'
-    measured_device = '2023.01 TSMC 65nm TEG'
-    device_id = 8
+    measured_device = '20240710 TSMC 22nm TEG'
+    device_id = 6
     temperature_k = 300
-    sweep_parameter = '\n#    Vg:[0V ~ 1.2V steps:41]\n#    Vd:[0V ~ 1.2V steps:41]\n#    Vsub:[0V ~ -1.2V steps:41]'
-    const_parameter = '\n#    Vsource:[0V]\n#    VDD:[1.2V]\n#    GND:[0V]'
+    output_file_path = 'data/' + measured_device + str(device_id) + ' ' + str(temperature_k) + 'K.csv'
+    sweep_parameter = '\n#    Vg:[0V ~ 0.8V steps:41]\n#    Vd:[0V ~ 0.8V steps:41]\n#    Vsub:[0V ~ -0.8V steps:41]'
+    const_parameter = '\n#    Vsource:[0V]\n#    VDD:[0.8V]\n#    GND:[0V]'
 
     start_time = datetime.now()
     date = start_time.strftime('%Y-%m-%d')
-    start_time_formatted = start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+    start_time_formatted = start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]
 
     result = advance_test.three_way_sweep(17, 4, 1, 0, 0.0,
-                                          0.8, 3, 0.01,
+                                          0.8, 41, 0.01,
                                           None, 3, 0, 0.0,
-                                          0.8, 3, 0.01, 6,
+                                          0.8, 41, 0.01, 6,
                                           0, 0, -0.8,
-                                          3, 0.01, 5,
+                                          41, 0.01, 5,
                                           0, 0, 0.01,
                                           None, None, 7, 0,
                                           0.8, 0.01, None,
@@ -45,7 +45,7 @@ def test_gpib_command():
     with open(output_file_path, mode='w') as output_file:
         for comment in comments:
             output_file.write('# ' + comment + '\n')
-        output_file.write('Drain_I,Gate_I,Source_I,Sub_I,Gate_V,Drain_V,Sub_V\n')
+        output_file.write('Drain_I,Gate_I,Source_I,Sub_I,Vdd_I,Gate_V,Drain_V,Sub_V\n')
 
     result.to_csv(output_file_path, mode='a', header=False, index=False)
 

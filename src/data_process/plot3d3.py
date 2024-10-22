@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data
-data = pd.read_csv('../../debug_tests/data/Jan_No16VgVdVsub.csv', comment='#')
+data = pd.read_csv('../../debug_tests/data/test.csv', comment='#')
 
 # Extract unique values for the sweeps
 sub_v_values = data['Sub_V'].unique()
@@ -14,7 +14,7 @@ drain_v_values = data['Drain_V'].unique()
 fig = go.Figure()
 
 # Define the columns for different I values
-i_values = ['Drain_I', 'Gate_I', 'Source_I', 'Sub_I']
+i_values = ['Drain_I', 'Gate_I', 'Source_I', 'Sub_I', 'Vdd_I']
 
 # Create a color map
 colors = plt.cm.viridis(np.linspace(0, 1, len(sub_v_values)))

@@ -28,6 +28,8 @@ class B1500GPIBCommand:
 
         if error != "0,0,0,0":
             raise Exception("B1500 Error:" + error)
+        else:
+            print("B1500 OK")
 
     def enable_channels(self, channels: Optional[List[int]] = None) -> None:
         """
@@ -326,6 +328,10 @@ class B1500GPIBCommand:
 
     def set_adc_type(self, channel: int, adc_type: int):
         self.communication.send_command(f"AAD {channel},{adc_type}")
+
+    def set_auto_zero(self, mode: int = 0):
+        command = "AZ"
+        self.communication.send_command(f"AZ {mode}")
 
     def set_wait_time(self, wait_type: int, coefficient: float = 1, offset: Optional[float] = 0):
         """

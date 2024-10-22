@@ -62,9 +62,17 @@ class BasicTest:
 
             for channel in all_channels:
                 self.command.set_adc_type(channel=channel, adc_type=1)
-            #
-            # self.command.set_adc_mode(adc_type=1, mode=1, coefficient=1)
-            #
+
+            # Set integration time
+            self.command.set_adc_mode(adc_type=1, mode=0, coefficient=6)
+
+            self.command.check_error()
+
+            # Set auto zero ON
+            self.command.set_auto_zero(mode=1)
+
+            self.command.check_error()
+
             # Set measurement mode
             self.command.set_measurement_mode(mode=16, channels=all_channels)
             #

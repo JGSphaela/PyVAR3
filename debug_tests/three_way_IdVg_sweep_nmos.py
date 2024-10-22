@@ -7,7 +7,7 @@ def test_gpib_command():
     advance_test = AdvanceTest()
 
     measured_device = '20240710 TSMC 22nm TEG'
-    device_id = 6
+    device_id = 5
     temperature_k = 300
     output_file_path = 'data/' + measured_device + str(device_id) + ' ' + str(temperature_k) + 'K.csv'
     sweep_parameter = '\n#    Vg:[0V ~ 0.8V steps:41]\n#    Vd:[0V ~ 0.8V steps:41]\n#    Vsub:[0V ~ -0.8V steps:41]'
@@ -20,9 +20,9 @@ def test_gpib_command():
     result = advance_test.three_way_sweep(17, 4, 1, 0, 0.0,
                                           0.8, 41, 0.01,
                                           None, 3, 0, 0.0,
-                                          0.8, 41, 0.01, 6,
+                                          0.8, 3, 0.01, 6,
                                           0, 0, -0.8,
-                                          41, 0.01, 5,
+                                          3, 0.01, 5,
                                           0, 0, 0.01,
                                           None, None, 7, 0,
                                           0.8, 0.01, None,

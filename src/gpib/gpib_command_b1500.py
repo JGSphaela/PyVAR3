@@ -25,8 +25,7 @@ class B1500GPIBCommand:
     def check_error(self):
         command = "ERR?"
         error = self.communication.query_response(command)
-
-        if error != "0,0,0,0":
+        if error != "0,0,0,0\r\n":
             raise Exception("B1500 Error:" + error)
         else:
             print("B1500 OK")

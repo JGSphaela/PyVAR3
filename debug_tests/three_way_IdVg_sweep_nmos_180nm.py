@@ -6,26 +6,43 @@ from datetime import datetime
 def test_gpib_command():
     advance_test = AdvanceTest()
 
-    measured_device = '20240710 TSMC 22nm TEG'
-    device_id = 4
-    temperature_k = 300
+    measured_device = '20240626 TSMC 180nm TEG'
+    device_id = 14
+    temperature_k = 6.5
     output_file_path = 'data/' + measured_device + str(device_id) + ' ' + str(temperature_k) + 'K.csv'
-    sweep_parameter = '\n#    Vg:[0V ~ 0.8V steps:41]\n#    Vd:[0V ~ 0.8V steps:41]\n#    Vsub:[0V ~ -0.8V steps: 9]'
-    const_parameter = '\n#    Vsource:[0V]\n#    VDD:[0.8V]\n#    GND:[0V]'
+    sweep_parameter = '\n#    Vg:[0V ~ 1.8V steps:37]\n#    Vd:[0V ~ 1.8V steps:37]\n#    Vsub:[0.4V ~ -0.4V steps:9]'
+    const_parameter = '\n#    Vsource:[0V]\n#    VDD:[1.8V]\n#    GND:[0V]'
 
     start_time = datetime.now()
     date = start_time.strftime('%Y-%m-%d')
     start_time_formatted = start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]
 
-    result = advance_test.three_way_sweep(17, 4, 1, 0, 0.0,
-                                          0.8, 41, 0.01,
-                                          None, 3, 0, 0.0,
-                                          0.8, 41, 0.01, 6,
-                                          0, 0, -0.8,
-                                          9, 0.01, 5,
+    smu_vdd = 1
+    smu_drain = 3
+    smu_gate = 4
+    smu_source = 5
+    smu_bulk = 2
+
+    smu_offset = 2
+
+    if smu_offset:
+        smu_vdd = smu_vdd + smu_offset
+        smu_drain = smu_drain + smu_offset
+        smu_gate = smu_gate + smu_offset
+        smu_source = smu_source + smu_offset
+        smu_bulk = smu_bulk + smu_offset
+
+    print(smu_drain)
+
+    result = advance_test.three_way_sweep(17, smu_gate, 1, 0, 0.0,
+                                          1.8, 37, 0.01,
+                                          None, smu_drain, 0, 0.0,
+                                          1.8, 37, 0.01, smu_bulk,
+                                          0, 0.4, -0.4,
+                                          9, 0.01, smu_source,
                                           0, 0, 0.01,
-                                          None, None, 7, 0,
-                                          0.8, 0.01, None,
+                                          None, None, smu_vdd, 0,
+                                          1.8, 0.01, None,
                                           None)
 
     end_time = datetime.now()
@@ -45,7 +62,7 @@ def test_gpib_command():
     with open(output_file_path, mode='w') as output_file:
         for comment in comments:
             output_file.write('# ' + comment + '\n')
-        output_file.write('Drain_I,Gate_I,Source_I,Sub_I,Vdd_I,Gate_V,Drain_V,Sub_V\n')
+        output_file.write('Vdd_I,Sub_I,Drain_I,Gate_I,Source_I,Gate_V,Drain_V,Sub_V\n')
 
     result.to_csv(output_file_path, mode='a', header=False, index=False)
 

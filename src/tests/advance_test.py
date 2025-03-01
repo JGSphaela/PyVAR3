@@ -83,8 +83,16 @@ class AdvanceTest:
                         const2_current_compliance_polarity: Optional[float] = None,
                         const2_current_range: Optional[int] = None) -> pd.DataFrame:
 
-        sweep2_step_value = (sweep2_stop - sweep2_start) / (sweep2_step - 1)
-        sweep3_step_value = (sweep3_stop - sweep3_start) / (sweep3_step - 1)
+        if sweep2_step == 1:
+            sweep2_step_value = sweep2_start
+        else:
+            sweep2_step_value = (sweep2_stop - sweep2_start) / (sweep2_step - 1)
+
+        if sweep3_step == 1:
+            sweep3_step_value = sweep3_start
+        else:
+            sweep3_step_value = (sweep3_stop - sweep3_start) / (sweep3_step - 1)
+
         sweep2_column_name = f"{chr(sweep2_channel + 64)}_V"
         sweep3_column_name = f"{chr(sweep3_channel + 64)}_V"
         result = pd.DataFrame()

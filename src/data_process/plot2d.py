@@ -3,7 +3,7 @@ from matplotlib.ticker import ScalarFormatter
 import pandas as pd
 import numpy as np
 
-data = pd.read_csv('../../debug_tests/data/Nov_No2VgVdVsub2.csv', comment='#')
+data = pd.read_csv('../../debug_tests/data/20240626 TSMC 180nm TEG15 300K.csv', comment='#')
 
 gate_v_values = data['Gate_V'].unique()
 sub_v_values = data['Sub_V'].unique()

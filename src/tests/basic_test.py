@@ -62,15 +62,19 @@ class BasicTest:
 
             for channel in all_channels:
                 self.command.set_adc_type(channel=channel, adc_type=1)
+                self.command.check_error()
 
             # Set integration time
             self.command.set_adc_mode(adc_type=1, mode=0, coefficient=6)
+            self.command.check_error()
 
             # Set auto zero ON
             self.command.set_auto_zero(mode=1)
+            self.command.check_error()
 
             # Set measurement mode
             self.command.set_measurement_mode(mode=16, channels=all_channels)
+            self.command.check_error()
             #
             # for channel in all_channels:
             #     self.command.set_smu_mode(channel=channel, mode=0)
@@ -79,11 +83,13 @@ class BasicTest:
             #
             # Enable channels
             self.command.enable_channels(all_channels)
+            self.command.check_error()
 
             # Set voltage sweep
             self.command.set_voltage_sweep(channel=sweep_channel, mode=sweep_mode, v_range=sweep_range, start=sweep_start,
                                            stop=sweep_stop, step=sweep_step, icomp=sweep_current_compliance,
                                            pcomp=sweep_power_compliance)
+            self.command.check_error()
 
             # End of pretest commands
 

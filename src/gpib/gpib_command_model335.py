@@ -18,8 +18,8 @@ class Model335GPIBCommand:
         self.communication.connect_device(gpib_address)
         self.communication.device.timeout = None
 
-    def query_celsius(self):
-        return self.communication.query_response("CRDG?")
+    def query_celsius(self, input_channel: str = "A"):
+        return self.communication.query_response(f"CRDG? {input_channel}")
 
-    def query_kelvin(self):
-        return self.communication.query_response("KRDG?")
+    def query_kelvin(self, input_channel: str = "A"):
+        return self.communication.query_response(f"KRDG? {input_channel}")

@@ -7,10 +7,10 @@ def test_gpib_command():
     advance_test = AdvanceTest()
 
     measured_device = '20240626 TSMC 180nm TEG'
-    device_id = 14
-    temperature_k = 6.5
+    device_id = 9
+    temperature_k = 7
     output_file_path = 'data/' + measured_device + str(device_id) + ' ' + str(temperature_k) + 'K.csv'
-    sweep_parameter = '\n#    Vg:[0V ~ 1.8V steps:37]\n#    Vd:[0V ~ 1.8V steps:37]\n#    Vsub:[0.4V ~ -0.4V steps:9]'
+    sweep_parameter = '\n#    Vg:[0V ~ 1.8V steps:37]\n#    Vd:[0V ~ 1.8V steps:37]\n#    Vsub:[0V ~ 0.9V steps:10]'
     const_parameter = '\n#    Vsource:[0V]\n#    VDD:[1.8V]\n#    GND:[0V]'
 
     start_time = datetime.now()
@@ -38,8 +38,8 @@ def test_gpib_command():
                                           1.8, 37, 0.01,
                                           None, smu_drain, 0, 0.0,
                                           1.8, 37, 0.01, smu_bulk,
-                                          0, 0.4, -0.4,
-                                          9, 0.01, smu_source,
+                                          0, 0, 0.9,
+                                          10, 0.01, smu_source,
                                           0, 0, 0.01,
                                           None, None, smu_vdd, 0,
                                           1.8, 0.01, None,

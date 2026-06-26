@@ -2,7 +2,12 @@ import logging
 import sys
 
 from PySide6.QtWidgets import QApplication
-from src.gui.main_window_pyside import MainWindow
+
+try:
+    from src.gui.main_window_pyside import MainWindow
+except ModuleNotFoundError:
+    # Allow direct execution: python src/main.py
+    from gui.main_window_pyside import MainWindow
 
 logging.basicConfig(
     level=logging.INFO,

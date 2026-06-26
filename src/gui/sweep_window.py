@@ -15,7 +15,7 @@ from src.measurement.config import MeasurementConfig, SweepChannelConfig
 
 logger = logging.getLogger(__name__)
 
-MAX_SWEEP_CHANNELS = 4
+MAX_SWEEP_CHANNELS = 3
 
 
 class SweepWindow(QWidget):

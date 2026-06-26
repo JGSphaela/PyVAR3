@@ -74,6 +74,7 @@ class MainWindow(QMainWindow):
         self.worker.finished.connect(self.on_finished)
         self.worker.error.connect(self.on_error)
         self.worker.aborted.connect(self.on_aborted)
+        self.worker.aborted_with_data.connect(self.on_aborted_with_data)
 
         self.sweep_window.set_running(True)
         self.statusBar().showMessage("Measurement running...")
@@ -107,6 +108,14 @@ class MainWindow(QMainWindow):
         self.sweep_window.set_running(False)
         self.statusBar().showMessage("Measurement aborted")
         QMessageBox.information(self, "Aborted", "Measurement was aborted.")
+
+    def on_aborted_with_data(self, result):
+        """Handle measurement abort with partial data."""
+        self.sweep_window.set_running(False)
+        self.statusBar().showMessage(f"Measurement aborted — {len(result)} partial data points collected")
+        QMessageBox.warning(self, "Aborted with Partial Data",
+                            f"Measurement was aborted after collecting {len(result)} data points.\n"
+                            "The partial result is available but may be incomplete.")
 
     def save_profile(self):
         """Save current sweep configuration to a JSON file."""

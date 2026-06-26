@@ -23,10 +23,20 @@ class TestSweepChannelConfig:
         errors = ch.validate()
         assert any("Channel must be >= 1" in e for e in errors)
 
+    def test_validate_zero_step_rejected(self):
+        ch = SweepChannelConfig(channel=1, step=0)
+        errors = ch.validate()
+        assert any("Step count must be > 0" in e for e in errors)
+
     def test_validate_negative_step(self):
         ch = SweepChannelConfig(channel=1, step=-1)
         errors = ch.validate()
-        assert any("Step count" in e for e in errors)
+        assert any("Step count must be > 0" in e for e in errors)
+
+    def test_validate_none_step_rejected(self):
+        ch = SweepChannelConfig(channel=1, step=None)
+        errors = ch.validate()
+        assert any("Step count must be > 0" in e for e in errors)
 
 
 class TestMeasurementConfig:
@@ -37,7 +47,7 @@ class TestMeasurementConfig:
 
     def test_too_many_channels(self):
         config = MeasurementConfig(
-            sweep_channels=[SweepChannelConfig(channel=i) for i in range(4)]
+            sweep_channels=[SweepChannelConfig(channel=i, step=10) for i in range(4)]
         )
         errors = config.validate()
         assert any("Maximum 3" in e for e in errors)

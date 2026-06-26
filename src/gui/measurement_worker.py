@@ -32,6 +32,7 @@ class MeasurementWorker(QThread):
     finished = Signal(object)  # pd.DataFrame
     error = Signal(str)
     aborted = Signal()
+    aborted_with_data = Signal(object)  # pd.DataFrame (partial data from abort)
 
     def __init__(self, config: MeasurementConfig, parent=None):
         super().__init__(parent)
@@ -77,7 +78,7 @@ class MeasurementWorker(QThread):
         except MeasurementAbortedError as e:
             logger.info(f"Measurement aborted: {e}")
             if e.partial_data is not None and len(e.partial_data) > 0:
-                self.finished.emit(e.partial_data)
+                self.aborted_with_data.emit(e.partial_data)
             else:
                 self.aborted.emit()
 

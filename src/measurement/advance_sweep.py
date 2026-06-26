@@ -151,6 +151,10 @@ class AdvanceTest:
 
             sweep2_results = []
             for sweep2_step_index in range(0, sweep2_step):
+                if abort_flag and abort_flag.is_set():
+                    partial = pd.concat(all_results + sweep2_results, ignore_index=True) if (all_results or sweep2_results) else pd.DataFrame()
+                    raise MeasurementAbortedError("Three-way sweep aborted by user", partial_data=partial)
+
                 sweep2_step_voltage = round(sweep2_start + sweep2_step_index * sweep2_step_value, 6)
                 sweep2_step_result = self.basic_test.multichannel_sweep_voltage(gpib_device_id=gpib_device_id,
                                                                                 sweep_channel=sweep1_channel,

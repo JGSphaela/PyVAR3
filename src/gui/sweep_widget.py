@@ -118,7 +118,7 @@ class SweepWidget(QWidget):
             'range': _read_int(self.range, default=0),
             'start': _read_float(self.start, default=0.0),
             'stop': _read_float(self.stop, default=0.0),
-            'step': _read_int(self.step, default=0),
+            'step': _read_int(self.step, default=None),
             'current_compliance': _read_float(self.current_comp),
             'power_compliance': _read_float(self.power_comp),
             'comp_polarity': 0,

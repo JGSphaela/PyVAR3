@@ -91,11 +91,17 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(f"Measurement complete — {len(result)} data points")
         logger.info(f"Measurement finished with {len(result)} rows")
 
-        # Auto-save if output file configured
+        # Auto-save if output file configured, otherwise prompt
         config = self.sweep_window.get_config()
         if config.output_file:
             result.to_csv(config.output_file, index=False)
             logger.info(f"Results saved to {config.output_file}")
+        else:
+            filepath, _ = QFileDialog.getSaveFileName(
+                self, "Save Measurement Results", "", "CSV Files (*.csv)")
+            if filepath:
+                result.to_csv(filepath, index=False)
+                logger.info(f"Results saved to {filepath}")
 
     def on_error(self, message: str):
         """Handle measurement error."""
@@ -119,6 +125,12 @@ class MainWindow(QMainWindow):
         if config.output_file:
             result.to_csv(config.output_file, index=False)
             logger.info(f"Partial results saved to {config.output_file}")
+        else:
+            filepath, _ = QFileDialog.getSaveFileName(
+                self, "Save Partial Results", "", "CSV Files (*.csv)")
+            if filepath:
+                result.to_csv(filepath, index=False)
+                logger.info(f"Partial results saved to {filepath}")
 
         QMessageBox.warning(self, "Aborted with Partial Data",
                             f"Measurement was aborted after collecting {len(result)} data points.\n"

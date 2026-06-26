@@ -95,6 +95,7 @@ class SweepWindow(QWidget):
         if self.sweep_count >= MAX_SWEEP_CHANNELS:
             self.v_layout.removeWidget(self.add_sweep_button)
             self.add_sweep_button.deleteLater()
+            self.add_sweep_button = None
 
     def get_config(self) -> MeasurementConfig:
         """Build a MeasurementConfig from the current widget values.

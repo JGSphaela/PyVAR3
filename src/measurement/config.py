@@ -64,6 +64,8 @@ class MeasurementConfig:
         errors = []
         if not self.sweep_channels:
             errors.append("At least one sweep channel is required")
+        if len(self.sweep_channels) < 2:
+            errors.append("At least 2 sweep channels are required for a measurement")
         if len(self.sweep_channels) > 3:
             errors.append(f"Maximum 3 sweep channels supported, got {len(self.sweep_channels)}")
         channels_seen = set()

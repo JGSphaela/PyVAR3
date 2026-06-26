@@ -2,7 +2,7 @@ import logging
 import sys
 
 from PySide6.QtWidgets import QApplication
-from gui.main_window_pyside import MainWindow
+from src.gui.main_window_pyside import MainWindow
 
 logging.basicConfig(
     level=logging.INFO,

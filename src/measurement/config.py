@@ -38,7 +38,9 @@ class SweepChannelConfig:
         if self.channel < 1:
             errors.append(f"Channel must be >= 1, got {self.channel}")
         if self.step < 0:
-            errors.append(f"Step count must be >= 0, got {self.step}")
+            errors.append(f"Step count must be non-negative, got {self.step}")
+        if self.step == 0 and (self.start != 0.0 or self.stop != 0.0):
+            errors.append("Step count must be > 0 when start or stop voltage is set")
         if self.step > 0 and self.start == self.stop and self.step > 1:
             errors.append(f"Start and stop are equal ({self.start}) but step > 1 ({self.step})")
         return errors

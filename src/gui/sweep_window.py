@@ -123,10 +123,9 @@ class SweepWindow(QWidget):
         """
         self.gpib_id_input.setText(str(config.gpib_device_id))
 
-        # Rebuild sweep widgets to match config
+        # Fully rebuild sweep widgets to match config
         target_count = max(1, len(config.sweep_channels))
-        while self.sweep_count < target_count:
-            self.add_sweep_channel()
+        self._rebuild_sweep_widgets(target_count)
 
         for widget, ch_config in zip(self.sweep_widget.widgets, config.sweep_channels):
             widget.set_values({
@@ -139,6 +138,33 @@ class SweepWindow(QWidget):
                 'current_compliance': ch_config.current_compliance,
                 'power_compliance': ch_config.power_compliance,
             })
+
+    def _rebuild_sweep_widgets(self, count: int) -> None:
+        """Replace the SweepWidgetGroup with one of the given count.
+
+        Properly removes old widgets and re-adds the Add Channel button if needed.
+        """
+        # Remove old widget group
+        self.v_layout.removeWidget(self.sweep_widget)
+        self.sweep_widget.deleteLater()
+
+        # Remove and re-add the add button if it exists
+        if hasattr(self, 'add_sweep_button') and self.add_sweep_button is not None:
+            self.v_layout.removeWidget(self.add_sweep_button)
+
+        # Create new widget group
+        self.sweep_count = count
+        self.sweep_widget = SweepWidgetGroup(sweep_count=self.sweep_count)
+        self.v_layout.insertWidget(2, self.sweep_widget)
+
+        # Re-add the add button if we haven't reached the max
+        if self.sweep_count < MAX_SWEEP_CHANNELS:
+            if not hasattr(self, '_add_button_recreated'):
+                self.add_sweep_button = QPushButton("+ Add Sweep Channel")
+                self.add_sweep_button.clicked.connect(self.add_sweep_channel)
+            self.v_layout.addWidget(self.add_sweep_button)
+        else:
+            self.add_sweep_button = None
 
     def set_running(self, running: bool) -> None:
         """Update UI state for running/idle."""

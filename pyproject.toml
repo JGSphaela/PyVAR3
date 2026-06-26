@@ -26,5 +26,8 @@ pyvar3 = "src.main:main"
 requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["src*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

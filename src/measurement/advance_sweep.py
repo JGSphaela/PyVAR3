@@ -1,6 +1,7 @@
 # src/measurement/advance_sweep.py
 import datetime
 import logging
+import os
 import threading
 import time
 
@@ -213,9 +214,11 @@ class AdvanceTest:
                 sweep2_result[f'Temp_{ch}_K'] = temp
 
             if sweep2_result.shape[0] != (sweep1_step * sweep2_step):
+                os.makedirs('data', exist_ok=True)
                 sweep2_result.to_csv('data/error_data.csv', index=False)
                 raise PyVARError('The number of output data is less than sweep step, an error may occurred. '
                                 'Check data/error_data.csv file.')
+            os.makedirs('data', exist_ok=True)
             sweep2_result.to_csv('data/backup_data.csv', mode='a', header=False, index=False)
             all_results.append(sweep2_result)
 

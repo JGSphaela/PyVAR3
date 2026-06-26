@@ -3,6 +3,7 @@ import os
 
 from PySide6.QtWidgets import QMainWindow, QStatusBar, QMessageBox, QFileDialog
 
+from src.data_process.export import export_with_metadata
 from src.gui.sweep_window import SweepWindow
 from src.gui.measurement_worker import MeasurementWorker
 from src.measurement.profiles import save_profile, load_profile
@@ -86,25 +87,28 @@ class MainWindow(QMainWindow):
         self.sweep_window.update_progress(current, total, eta_str)
         self.statusBar().showMessage(f"Step {current}/{total} — ETA: {eta_str}")
 
+    def _save_results(self, result, config, prompt_title="Save Measurement Results"):
+        """Save results using export_with_metadata for provenance.
+
+        Uses config.output_file if set, otherwise prompts for a path.
+        """
+        filepath = config.output_file
+        if not filepath:
+            filepath, _ = QFileDialog.getSaveFileName(
+                self, prompt_title, "", "CSV Files (*.csv)")
+        if filepath:
+            os.makedirs(os.path.dirname(filepath) or '.', exist_ok=True)
+            export_with_metadata(result, config, filepath)
+            logger.info(f"Results saved to {filepath}")
+
     def on_finished(self, result):
         """Handle measurement completion."""
         self.sweep_window.set_running(False)
         self.statusBar().showMessage(f"Measurement complete — {len(result)} data points")
         logger.info(f"Measurement finished with {len(result)} rows")
 
-        # Auto-save using the worker's config (not current UI state, which may have changed)
-        config = self.worker.config
-        if config.output_file:
-            os.makedirs(os.path.dirname(config.output_file) or '.', exist_ok=True)
-            result.to_csv(config.output_file, index=False)
-            logger.info(f"Results saved to {config.output_file}")
-        else:
-            filepath, _ = QFileDialog.getSaveFileName(
-                self, "Save Measurement Results", "", "CSV Files (*.csv)")
-            if filepath:
-                os.makedirs(os.path.dirname(filepath) or '.', exist_ok=True)
-                result.to_csv(filepath, index=False)
-                logger.info(f"Results saved to {filepath}")
+        # Save using the worker's config (not current UI state, which may have changed)
+        self._save_results(result, self.worker.config)
 
     def on_error(self, message: str):
         """Handle measurement error."""
@@ -123,19 +127,8 @@ class MainWindow(QMainWindow):
         self.sweep_window.set_running(False)
         self.statusBar().showMessage(f"Measurement aborted — {len(result)} partial data points collected")
 
-        # Persist partial results using the worker's config
-        config = self.worker.config
-        if config.output_file:
-            os.makedirs(os.path.dirname(config.output_file) or '.', exist_ok=True)
-            result.to_csv(config.output_file, index=False)
-            logger.info(f"Partial results saved to {config.output_file}")
-        else:
-            filepath, _ = QFileDialog.getSaveFileName(
-                self, "Save Partial Results", "", "CSV Files (*.csv)")
-            if filepath:
-                os.makedirs(os.path.dirname(filepath) or '.', exist_ok=True)
-                result.to_csv(filepath, index=False)
-                logger.info(f"Partial results saved to {filepath}")
+        # Persist partial results using the worker's config with metadata
+        self._save_results(result, self.worker.config, prompt_title="Save Partial Results")
 
         QMessageBox.warning(self, "Aborted with Partial Data",
                             f"Measurement was aborted after collecting {len(result)} data points.\n"

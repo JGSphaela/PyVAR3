@@ -113,6 +113,13 @@ class MainWindow(QMainWindow):
         """Handle measurement abort with partial data."""
         self.sweep_window.set_running(False)
         self.statusBar().showMessage(f"Measurement aborted — {len(result)} partial data points collected")
+
+        # Persist partial results like a normal completion
+        config = self.sweep_window.get_config()
+        if config.output_file:
+            result.to_csv(config.output_file, index=False)
+            logger.info(f"Partial results saved to {config.output_file}")
+
         QMessageBox.warning(self, "Aborted with Partial Data",
                             f"Measurement was aborted after collecting {len(result)} data points.\n"
                             "The partial result is available but may be incomplete.")

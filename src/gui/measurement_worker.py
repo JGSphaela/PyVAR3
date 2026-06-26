@@ -77,6 +77,12 @@ class MeasurementWorker(QThread):
 
         except MeasurementAbortedError as e:
             logger.info(f"Measurement aborted: {e}")
+            # Reset SMUs to clear any biased voltages left by the sweep
+            try:
+                advance_test.basic_test.command.reset_channel()
+                logger.info("SMU channels reset after abort")
+            except Exception as reset_err:
+                logger.warning(f"Failed to reset SMU channels after abort: {reset_err}")
             if e.partial_data is not None and len(e.partial_data) > 0:
                 self.aborted_with_data.emit(e.partial_data)
             else:

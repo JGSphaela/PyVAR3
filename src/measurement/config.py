@@ -66,9 +66,13 @@ class MeasurementConfig:
             errors.append("At least one sweep channel is required")
         if len(self.sweep_channels) > 3:
             errors.append(f"Maximum 3 sweep channels supported, got {len(self.sweep_channels)}")
+        channels_seen = set()
         for i, ch in enumerate(self.sweep_channels):
             for err in ch.validate():
                 errors.append(f"Sweep channel {i + 1}: {err}")
+            if ch.channel in channels_seen:
+                errors.append(f"Duplicate sweep channel {ch.channel} — each sweep must use a unique SMU channel")
+            channels_seen.add(ch.channel)
         return errors
 
     def to_dict(self) -> dict:

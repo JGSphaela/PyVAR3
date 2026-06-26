@@ -61,5 +61,5 @@ class Model335GPIBCommand:
         :param loop: Control loop number (1 or 2).
         :return: Heater output as a percentage (0-100).
         """
-        raw = self.communication.query_response(f"HTR?")
+        raw = self.communication.query_response(f"HTR? {loop}")
         return float(raw.strip())

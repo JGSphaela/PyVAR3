@@ -1,4 +1,5 @@
 import logging
+import os
 
 from PySide6.QtWidgets import QMainWindow, QStatusBar, QMessageBox, QFileDialog
 
@@ -91,15 +92,17 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(f"Measurement complete — {len(result)} data points")
         logger.info(f"Measurement finished with {len(result)} rows")
 
-        # Auto-save if output file configured, otherwise prompt
-        config = self.sweep_window.get_config()
+        # Auto-save using the worker's config (not current UI state, which may have changed)
+        config = self.worker.config
         if config.output_file:
+            os.makedirs(os.path.dirname(config.output_file) or '.', exist_ok=True)
             result.to_csv(config.output_file, index=False)
             logger.info(f"Results saved to {config.output_file}")
         else:
             filepath, _ = QFileDialog.getSaveFileName(
                 self, "Save Measurement Results", "", "CSV Files (*.csv)")
             if filepath:
+                os.makedirs(os.path.dirname(filepath) or '.', exist_ok=True)
                 result.to_csv(filepath, index=False)
                 logger.info(f"Results saved to {filepath}")
 
@@ -120,15 +123,17 @@ class MainWindow(QMainWindow):
         self.sweep_window.set_running(False)
         self.statusBar().showMessage(f"Measurement aborted — {len(result)} partial data points collected")
 
-        # Persist partial results like a normal completion
-        config = self.sweep_window.get_config()
+        # Persist partial results using the worker's config
+        config = self.worker.config
         if config.output_file:
+            os.makedirs(os.path.dirname(config.output_file) or '.', exist_ok=True)
             result.to_csv(config.output_file, index=False)
             logger.info(f"Partial results saved to {config.output_file}")
         else:
             filepath, _ = QFileDialog.getSaveFileName(
                 self, "Save Partial Results", "", "CSV Files (*.csv)")
             if filepath:
+                os.makedirs(os.path.dirname(filepath) or '.', exist_ok=True)
                 result.to_csv(filepath, index=False)
                 logger.info(f"Partial results saved to {filepath}")
 

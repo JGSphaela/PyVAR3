@@ -29,6 +29,7 @@ class SweepWindow(QWidget):
         super().__init__()
 
         self.sweep_count = 1
+        self._loaded_config = None  # Preserves non-UI fields from loaded profiles
 
         # GPIB configuration
         gpib_group = QGroupBox("Instrument")
@@ -115,6 +116,8 @@ class SweepWindow(QWidget):
         return MeasurementConfig(
             gpib_device_id=gpib_id,
             sweep_channels=channels,
+            output_file=self._loaded_config.output_file if self._loaded_config else None,
+            metadata=self._loaded_config.metadata if self._loaded_config else {},
         )
 
     def set_config(self, config: MeasurementConfig) -> None:
@@ -122,6 +125,7 @@ class SweepWindow(QWidget):
 
         :param config: Configuration to load into the UI.
         """
+        self._loaded_config = config
         self.gpib_id_input.setText(str(config.gpib_device_id))
 
         # Fully rebuild sweep widgets to match config
@@ -149,9 +153,11 @@ class SweepWindow(QWidget):
         self.v_layout.removeWidget(self.sweep_widget)
         self.sweep_widget.deleteLater()
 
-        # Remove and re-add the add button if it exists
+        # Remove and delete the add button if it exists
         if hasattr(self, 'add_sweep_button') and self.add_sweep_button is not None:
             self.v_layout.removeWidget(self.add_sweep_button)
+            self.add_sweep_button.deleteLater()
+            self.add_sweep_button = None
 
         # Create new widget group
         self.sweep_count = count

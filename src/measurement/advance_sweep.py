@@ -152,7 +152,17 @@ class AdvanceTest:
             sweep2_results = []
             for sweep2_step_index in range(0, sweep2_step):
                 if abort_flag and abort_flag.is_set():
-                    partial = pd.concat(all_results + sweep2_results, ignore_index=True) if (all_results or sweep2_results) else pd.DataFrame()
+                    # Tag any collected results with sweep3 voltage and temperature before aborting
+                    if sweep2_results:
+                        current_block = pd.concat(sweep2_results, ignore_index=True)
+                        current_block[sweep3_column_name] = sweep3_step_voltage
+                        for ch, temp in temps.items():
+                            current_block[f'Temp_{ch}_K'] = temp
+                        partial = pd.concat(all_results + [current_block], ignore_index=True)
+                    elif all_results:
+                        partial = pd.concat(all_results, ignore_index=True)
+                    else:
+                        partial = pd.DataFrame()
                     raise MeasurementAbortedError("Three-way sweep aborted by user", partial_data=partial)
 
                 sweep2_step_voltage = round(sweep2_start + sweep2_step_index * sweep2_step_value, 6)

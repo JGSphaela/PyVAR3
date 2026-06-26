@@ -1,5 +1,5 @@
 # debug_tests/three_way_IdVg_sweep.py
-from src.tests.advance_test import AdvanceTest
+from src.measurement.advance_sweep import AdvanceTest
 from datetime import datetime
 
 

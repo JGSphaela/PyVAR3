@@ -1,4 +1,4 @@
-# src/config/test_preparation.py
+# src/measurement/preparation.py
 
 from typing import Optional
 
@@ -9,6 +9,12 @@ from src.data_process.read_data_process import DataProcess
 
 
 class TestPreparation():
+    """Handles pre-test setup and measurement execution for the B1500.
+
+    Configures output format, timestamp, filter, and averaging settings,
+    then triggers measurements and processes the raw response into DataFrames.
+    """
+
     def __init__(self):
         self.command = B1500GPIBCommand()
         self.data_process = DataProcess()

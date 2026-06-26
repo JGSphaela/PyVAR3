@@ -1,11 +1,22 @@
+import logging
 import sys
+
 from PySide6.QtWidgets import QApplication
 from gui.main_window_pyside import MainWindow
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(name)s - %(levelname)s - %(message)s'
+)
 
+
+def main():
+    """Entry point for PyVAR3 application."""
+    app = QApplication(sys.argv)
     window = MainWindow(app)
     window.show()
-
     app.exec()
+
+
+if __name__ == "__main__":
+    main()

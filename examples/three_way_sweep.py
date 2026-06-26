@@ -1,23 +1,25 @@
-# debug_tests/two_way_sweep.py
+# debug_tests/three_way_sweep.py
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication
 from src.gpib.gpib_command_b1500 import B1500GPIBCommand
-from src.tests.basic_test import BasicTest
-from src.tests.advance_test import AdvanceTest
+from src.measurement.basic_sweep import BasicTest
+from src.measurement.advance_sweep import AdvanceTest
 
 
 def test_gpib_command():
     advance_test = AdvanceTest()
 
-    print(advance_test.two_way_sweep(17, 2, 1, 0, 0.0,
+    result = advance_test.three_way_sweep(17, 2, 1, 0, 0.0,
                                      1.0, 3, None,
                                      None, 3, 0, 0.0,
                                      2.0, 5, None, 1,
-                                     0, 1.0, None,
-                                     None, None, 4,
+                                     0, 0.0, 1.0,
+                                     4, None, 4,
                                      0, 1.2, None,
-                                     None, None))
+                                     None, None)
+
+    result.to_csv('output.csv', index=False)
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ fig.update_layout(
     scene=dict(
         xaxis_title='Gate_V',
         yaxis_title='Sub_V',
-        zaxis_title='Drain_I'
+        zaxis_title='Gate_I'
     ),
     title='3D Plot of Drain_I vs Gate_V and Sub_V for different Drain_V values'
 )

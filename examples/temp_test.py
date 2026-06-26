@@ -1,4 +1,4 @@
-# debug_tests/temp_test.py
+# examples/temp_test.py
 
 from src.gpib.gpib_command_model335 import Model335GPIBCommand
 

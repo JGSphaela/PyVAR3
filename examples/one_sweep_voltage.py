@@ -1,9 +1,9 @@
-# debug_tests/multichannel_sweep_voltage.py
+# examples/one_sweep_voltage.py
 import time
 
 from src.gpib.gpib_communication import GPIBCommunication
 from src.gpib.gpib_command_b1500 import B1500GPIBCommand
-from src.tests.basic_test import BasicTest
+from src.measurement.basic_sweep import BasicTest
 
 
 def test_gpib_command():

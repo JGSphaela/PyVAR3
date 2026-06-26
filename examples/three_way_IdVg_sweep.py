@@ -3,8 +3,8 @@ import time
 
 from src.gpib.gpib_communication import GPIBCommunication
 from src.gpib.gpib_command_b1500 import B1500GPIBCommand
-from src.tests.basic_test import BasicTest
-from src.tests.advance_test import AdvanceTest
+from src.measurement.basic_sweep import BasicTest
+from src.measurement.advance_sweep import AdvanceTest
 
 
 def test_gpib_command():

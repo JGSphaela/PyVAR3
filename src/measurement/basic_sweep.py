@@ -1,14 +1,27 @@
-# src/tests/basic_test.py
+# src/measurement/basic_sweep.py
 
+import logging
 from typing import Optional
 
 import pandas as pd
 
+from src.gpib.exceptions import PyVARError
 from src.gpib.gpib_command_b1500 import B1500GPIBCommand
 from src.data_process.read_data_process import DataProcess
 
+logger = logging.getLogger(__name__)
+
 
 class BasicTest:
+    """Orchestrates a single multichannel voltage sweep measurement on the B1500.
+
+    Handles instrument initialization (ADC, channels, measurement mode) on the first call,
+    then performs the sweep and returns parsed measurement data as a DataFrame.
+
+    The `counter` parameter controls whether pre-test setup is skipped — used by
+    AdvanceTest to avoid re-sending setup commands in nested sweep loops.
+    """
+
     def __init__(self):
         self.command = B1500GPIBCommand()
         self.data_process = DataProcess()
@@ -38,6 +51,25 @@ class BasicTest:
                                    const4_current_compliance_polarity: Optional[float] = None,
                                    const4_current_range: Optional[int] = None,
                                    counter: Optional[int] = None) -> pd.DataFrame:
+        """Execute a single multichannel voltage sweep.
+
+        On the first call (counter is None or 0), initializes the instrument:
+        sets output format, configures ADC, enables channels, and sets the sweep.
+        On subsequent calls (counter > 0), only updates constant voltages and triggers.
+
+        :param gpib_device_id: GPIB address of the B1500.
+        :param sweep_channel: SMU channel for the sweep.
+        :param sweep_mode: Sweep mode (1 = linear, 2 = log, etc.).
+        :param sweep_range: Voltage range for the sweep.
+        :param sweep_start: Start voltage of the sweep.
+        :param sweep_stop: Stop voltage of the sweep.
+        :param sweep_step: Number of measurement steps.
+        :param sweep_current_compliance: Current compliance for sweep channel.
+        :param sweep_power_compliance: Power compliance for sweep channel.
+        :param counter: If None/0, runs full pre-test setup. If > 0, skips setup.
+        :return: DataFrame with measurement data (currents and voltages per step).
+        :raises PyVARError: If output data rows don't match sweep steps.
+        """
 
         # a hack to make sure pretest commands are only send once.
         if not counter:
@@ -118,6 +150,6 @@ class BasicTest:
         out_data = self.data_process.data_into_dataframe(self.command.trigger_measurement())
         if out_data.shape[0] != sweep_step:
             out_data.to_csv('data/error_data.csv', index=False)
-            raise Exception('The number of output data does not match the sweep step, an error may occurred')
+            raise PyVARError('The number of output data does not match the sweep step, an error may occurred')
 
         return out_data

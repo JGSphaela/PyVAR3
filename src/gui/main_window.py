@@ -58,8 +58,12 @@ class MainWindow(QMainWindow):
         language_dropdown.addItems(["English", "日本語"])
         language_dropdown.currentIndexChanged.connect(self.change_language)
 
-        self.tabs.setCornerWidget(language_label, Qt.Corner.TopLeftCorner)
-        self.tabs.setCornerWidget(language_dropdown, Qt.Corner.TopRightCorner)
+        corner_widget = QWidget()
+        corner_layout = QVBoxLayout(corner_widget)
+        corner_layout.setContentsMargins(0, 0, 0, 0)
+        corner_layout.addWidget(language_label)
+        corner_layout.addWidget(language_dropdown)
+        self.tabs.setCornerWidget(corner_widget)
 
     def change_language(self, index):
         if index == 0:

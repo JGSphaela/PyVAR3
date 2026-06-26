@@ -29,7 +29,7 @@ class MeasurementWorker(QThread):
     """
 
     progress = Signal(int, int, str)
-    finished = Signal(object)  # pd.DataFrame
+    result_ready = Signal(object)  # pd.DataFrame — measurement completed successfully
     error = Signal(str)
     aborted = Signal()
     aborted_with_data = Signal(object)  # pd.DataFrame (partial data from abort)
@@ -73,7 +73,7 @@ class MeasurementWorker(QThread):
                 self.error.emit("At least 2 sweep channels are required for a measurement")
                 return
 
-            self.finished.emit(result)
+            self.result_ready.emit(result)
 
         except MeasurementAbortedError as e:
             logger.info(f"Measurement aborted: {e}")

@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
         # Start measurement in background thread
         self.worker = MeasurementWorker(config, parent=self)
         self.worker.progress.connect(self.on_progress)
-        self.worker.finished.connect(self.on_finished)
+        self.worker.result_ready.connect(self.on_finished)
         self.worker.error.connect(self.on_error)
         self.worker.aborted.connect(self.on_aborted)
         self.worker.aborted_with_data.connect(self.on_aborted_with_data)

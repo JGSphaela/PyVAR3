@@ -1,6 +1,7 @@
 # src/measurement/basic_sweep.py
 
 import logging
+import os
 from typing import Optional
 
 import pandas as pd
@@ -60,7 +61,7 @@ class BasicTest:
         :param gpib_device_id: GPIB address of the B1500.
         :param sweep_channel: SMU channel for the sweep.
         :param sweep_mode: Sweep mode (1 = linear, 2 = log, etc.).
-        :param sweep_range: Voltage range for the sweep.
+        :param sweep_range: Voltage range of the sweep.
         :param sweep_start: Start voltage of the sweep.
         :param sweep_stop: Stop voltage of the sweep.
         :param sweep_step: Number of measurement steps.
@@ -149,6 +150,7 @@ class BasicTest:
 
         out_data = self.data_process.data_into_dataframe(self.command.trigger_measurement())
         if out_data.shape[0] != sweep_step:
+            os.makedirs('data', exist_ok=True)
             out_data.to_csv('data/error_data.csv', index=False)
             raise PyVARError('The number of output data does not match the sweep step, an error may occurred')
 

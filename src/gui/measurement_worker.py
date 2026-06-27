@@ -90,8 +90,20 @@ class MeasurementWorker(QThread):
 
         except PyVARError as e:
             logger.error(f"Measurement error: {e}")
+            # Reset SMUs to clear biased voltages, same as abort path
+            try:
+                advance_test.basic_test.command.reset_channel()
+                logger.info("SMU channels reset after measurement error")
+            except Exception as reset_err:
+                logger.warning(f"Failed to reset SMU channels after error: {reset_err}")
             self.error.emit(str(e))
 
         except Exception as e:
             logger.exception(f"Unexpected error during measurement: {e}")
+            # Reset SMUs to clear biased voltages, same as abort path
+            try:
+                advance_test.basic_test.command.reset_channel()
+                logger.info("SMU channels reset after unexpected error")
+            except Exception as reset_err:
+                logger.warning(f"Failed to reset SMU channels after error: {reset_err}")
             self.error.emit(f"Unexpected error: {e}")

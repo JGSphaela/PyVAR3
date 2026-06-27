@@ -10,6 +10,8 @@ from src.measurement.profiles import save_profile, load_profile
 
 logger = logging.getLogger(__name__)
 
+QUIT_ABORT_TIMEOUT_MS = 30_000
+
 
 class MainWindow(QMainWindow):
     """Main PySide6 application window.
@@ -37,7 +39,7 @@ class MainWindow(QMainWindow):
         load_profile_action.triggered.connect(self.load_profile)
         file_menu.addSeparator()
         quit_action = file_menu.addAction("Quit")
-        quit_action.triggered.connect(self.app.quit)
+        quit_action.triggered.connect(self.quit_app)
 
         # Help Menu
         help_menu = menu_bar.addMenu("Help")
@@ -54,6 +56,49 @@ class MainWindow(QMainWindow):
 
         # Wire start/stop button
         self.sweep_window.start_stop_button.clicked.connect(self.on_start_stop)
+
+    def _worker_is_running(self) -> bool:
+        """Return True while a measurement worker is active."""
+        return self.worker is not None and self.worker.isRunning()
+
+    def _abort_worker_before_exit(self) -> bool:
+        """Abort a running measurement and wait for SMU cleanup before exit.
+
+        Returns True when it is safe to quit/close, or False when the worker
+        did not stop within the timeout and the window should stay open.
+        """
+        if not self._worker_is_running():
+            return True
+
+        logger.info("Quit requested during measurement; aborting worker before exit")
+        self.statusBar().showMessage("Aborting measurement before exit...")
+        self.worker.abort()
+
+        if self.worker.wait(QUIT_ABORT_TIMEOUT_MS):
+            logger.info("Measurement worker stopped before exit")
+            return True
+
+        logger.warning("Measurement worker did not stop before quit timeout")
+        self.statusBar().showMessage("Quit canceled — measurement is still stopping")
+        QMessageBox.warning(
+            self,
+            "Measurement Still Running",
+            "PyVAR3 requested a measurement abort, but the worker did not stop yet.\n"
+            "The application will stay open so the instrument cleanup path can complete.",
+        )
+        return False
+
+    def quit_app(self):
+        """Quit only after any running measurement has been safely aborted."""
+        if self._abort_worker_before_exit():
+            self.app.quit()
+
+    def closeEvent(self, event):
+        """Route window close through the same safe-abort path as File > Quit."""
+        if self._abort_worker_before_exit():
+            event.accept()
+        else:
+            event.ignore()
 
     def on_start_stop(self):
         """Handle Start/Stop button click."""

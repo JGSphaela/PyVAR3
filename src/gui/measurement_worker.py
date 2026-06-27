@@ -23,7 +23,7 @@ class MeasurementWorker(QThread):
 
     Signals:
         progress(current: int, total: int, eta_str: str) — emitted at each sweep step
-        finished(result: object) — emitted when measurement completes (carries DataFrame)
+        result_ready(result: object) — emitted when measurement completes (carries DataFrame)
         error(message: str) — emitted on error (carries error description)
         aborted() — emitted when measurement is gracefully aborted
     """
@@ -44,8 +44,20 @@ class MeasurementWorker(QThread):
         self._abort_flag.set()
         logger.info("Abort requested")
 
+    def _reset_smus(self, advance_test: AdvanceTest | None, reason: str):
+        """Disable all SMU channels after a worker run path touches the instrument."""
+        if advance_test is None:
+            logger.debug("Skipping SMU reset after %s because the instrument was not initialized", reason)
+            return
+        try:
+            advance_test.basic_test.command.reset_channel()
+            logger.info("SMU channels reset after %s", reason)
+        except Exception as reset_err:
+            logger.warning("Failed to reset SMU channels after %s: %s", reason, reset_err)
+
     def run(self):
         """Execute the measurement in a background thread."""
+        advance_test = None
         try:
             advance_test = AdvanceTest()
 
@@ -73,16 +85,13 @@ class MeasurementWorker(QThread):
                 self.error.emit("At least 2 sweep channels are required for a measurement")
                 return
 
+            self._reset_smus(advance_test, "successful measurement")
             self.result_ready.emit(result)
 
         except MeasurementAbortedError as e:
             logger.info(f"Measurement aborted: {e}")
             # Reset SMUs to clear any biased voltages left by the sweep
-            try:
-                advance_test.basic_test.command.reset_channel()
-                logger.info("SMU channels reset after abort")
-            except Exception as reset_err:
-                logger.warning(f"Failed to reset SMU channels after abort: {reset_err}")
+            self._reset_smus(advance_test, "abort")
             if e.partial_data is not None and len(e.partial_data) > 0:
                 self.aborted_with_data.emit(e.partial_data)
             else:
@@ -91,19 +100,11 @@ class MeasurementWorker(QThread):
         except PyVARError as e:
             logger.error(f"Measurement error: {e}")
             # Reset SMUs to clear biased voltages, same as abort path
-            try:
-                advance_test.basic_test.command.reset_channel()
-                logger.info("SMU channels reset after measurement error")
-            except Exception as reset_err:
-                logger.warning(f"Failed to reset SMU channels after error: {reset_err}")
+            self._reset_smus(advance_test, "measurement error")
             self.error.emit(str(e))
 
         except Exception as e:
             logger.exception(f"Unexpected error during measurement: {e}")
             # Reset SMUs to clear biased voltages, same as abort path
-            try:
-                advance_test.basic_test.command.reset_channel()
-                logger.info("SMU channels reset after unexpected error")
-            except Exception as reset_err:
-                logger.warning(f"Failed to reset SMU channels after error: {reset_err}")
+            self._reset_smus(advance_test, "unexpected error")
             self.error.emit(f"Unexpected error: {e}")

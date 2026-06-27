@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox, QFileDialog
 from PyQt6.QtCore import Qt
 from src.gpib.gpib_communication import GPIBCommunication
 from src.utils.helper import load_translations
@@ -99,8 +99,19 @@ class MainWindow(QMainWindow):
             self.show_error(str(e))
 
     def show_plotly_viewer(self):
-        self.plotly_viewer = PlotlyViewer(self)
-        self.plotly_viewer.show()
+        csv_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Measurement CSV",
+            "",
+            "CSV Files (*.csv);;All Files (*)",
+        )
+        if not csv_path:
+            return
+        try:
+            self.plotly_viewer = PlotlyViewer(csv_path, self)
+            self.plotly_viewer.show()
+        except Exception as e:
+            self.show_error(str(e))
 
     def show_error(self, message):
         QMessageBox.critical(self, "Error", message)

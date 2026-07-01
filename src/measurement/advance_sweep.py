@@ -83,7 +83,8 @@ class AdvanceTest:
                                                                      const3_voltage=const2_voltage,
                                                                      const3_current_compliance=const2_current_compliance,
                                                                      const3_current_compliance_polarity=const2_current_compliance_polarity,
-                                                                     const3_current_range=const2_current_range)
+                                                                     const3_current_range=const2_current_range,
+                                                                     counter=step)
             step_result[sweep2_column_name] = step_voltage
             results.append(step_result)
 

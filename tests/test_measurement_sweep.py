@@ -108,6 +108,27 @@ class TestTwoWaySweep:
         # Channel 3 → chr(3+64) = 'C', so column should be 'C_V'
         assert 'C_V' in result.columns
 
+    def test_two_way_sweep_reuses_b1500_setup_after_first_outer_step(self, mock_advance_test):
+        """Only the first two-way outer step should run BasicTest pretest setup."""
+        adv, _ = mock_advance_test
+        counters = []
+        original_sweep = adv.basic_test.multichannel_sweep_voltage
+
+        def recording_sweep(*args, **kwargs):
+            counters.append(kwargs.get('counter'))
+            return original_sweep(*args, **kwargs)
+
+        adv.basic_test.multichannel_sweep_voltage = recording_sweep
+
+        adv.two_way_sweep(
+            sweep1_channel=1, sweep1_mode=1, sweep1_range=0,
+            sweep1_start=0.0, sweep1_stop=1.0, sweep1_step=3,
+            sweep2_channel=2, sweep2_range=0,
+            sweep2_start=0.0, sweep2_stop=1.0, sweep2_step=3,
+        )
+
+        assert counters == [0, 1, 2]
+
 
 class TestThreeWaySweep:
     def test_three_way_sweep_step_one_no_division_error(self, mock_advance_test):

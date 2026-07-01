@@ -45,14 +45,23 @@ class MeasurementWorker(QThread):
         self._abort_flag.set()
         logger.info("Abort requested")
 
+    def _instrument_session_opened(self, advance_test: AdvanceTest | None) -> bool:
+        """Return True only after the B1500 command layer has an open device session."""
+        if advance_test is None:
+            return False
+        basic_test = getattr(advance_test, "basic_test", None)
+        command = getattr(basic_test, "command", None)
+        communication = getattr(command, "communication", None)
+        return getattr(communication, "device", None) is not None
+
     def _reset_smus(self, advance_test: AdvanceTest | None, reason: str) -> str | None:
-        """Disable all SMU channels after a worker run path touches the instrument.
+        """Disable all SMU channels after a worker run path touches an instrument session.
 
         Returns:
             A user-visible critical warning if reset failed, otherwise None.
         """
-        if advance_test is None:
-            logger.debug("Skipping SMU reset after %s because the instrument was not initialized", reason)
+        if not self._instrument_session_opened(advance_test):
+            logger.debug("Skipping SMU reset after %s because no instrument session is open", reason)
             return None
         try:
             advance_test.basic_test.command.reset_channel()

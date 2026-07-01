@@ -21,10 +21,11 @@ def _config() -> MeasurementConfig:
 
 
 class _FakeAdvanceTest:
-    def __init__(self, *, result=None, exc=None, reset_exc=None):
+    def __init__(self, *, result=None, exc=None, reset_exc=None, session_open=True):
         self.result = result if result is not None else pd.DataFrame({"A_I": [1e-9]})
         self.exc = exc
         self.basic_test = MagicMock()
+        self.basic_test.command.communication.device = object() if session_open else None
         if reset_exc is not None:
             self.basic_test.command.reset_channel.side_effect = reset_exc
 
@@ -97,3 +98,38 @@ def test_worker_surfaces_reset_failure_on_measurement_error():
     assert len(emitted_reset_errors) == 1
     assert events == ["error", "reset_failed"]
     assert "DZ timeout" in emitted_reset_errors[0]
+
+
+def test_worker_skips_reset_warning_when_no_instrument_session_opened():
+    fake = _FakeAdvanceTest(exc=PyVARError("connection failed"), session_open=False)
+    worker = MeasurementWorker(_config())
+    emitted_errors = []
+    emitted_reset_errors = []
+    worker.error.connect(emitted_errors.append)
+    worker.reset_failed.connect(emitted_reset_errors.append)
+
+    with patch("src.gui.measurement_worker.AdvanceTest", return_value=fake):
+        worker.run()
+
+    assert emitted_errors == ["connection failed"]
+    assert emitted_reset_errors == []
+    fake.basic_test.command.reset_channel.assert_not_called()
+
+
+def test_worker_skips_reset_warning_on_abort_before_first_instrument_session():
+    fake = _FakeAdvanceTest(
+        exc=MeasurementAbortedError("pre-step abort", partial_data=pd.DataFrame()),
+        session_open=False,
+    )
+    worker = MeasurementWorker(_config())
+    emitted_aborts = []
+    emitted_reset_errors = []
+    worker.aborted.connect(lambda: emitted_aborts.append("aborted"))
+    worker.reset_failed.connect(emitted_reset_errors.append)
+
+    with patch("src.gui.measurement_worker.AdvanceTest", return_value=fake):
+        worker.run()
+
+    assert emitted_aborts == ["aborted"]
+    assert emitted_reset_errors == []
+    fake.basic_test.command.reset_channel.assert_not_called()

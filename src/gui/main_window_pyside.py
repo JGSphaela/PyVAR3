@@ -114,6 +114,7 @@ class MainWindow(QMainWindow):
         self.worker.error.connect(self.on_error)
         self.worker.aborted.connect(self.on_aborted)
         self.worker.aborted_with_data.connect(self.on_aborted_with_data)
+        self.worker.reset_failed.connect(self.on_reset_failed)
 
         self.sweep_window.set_running(True)
         self.statusBar().showMessage("Measurement running...")
@@ -152,6 +153,11 @@ class MainWindow(QMainWindow):
         self.sweep_window.set_running(False)
         self.statusBar().showMessage(f"Error: {message}")
         QMessageBox.critical(self, "Measurement Error", message)
+
+    def on_reset_failed(self, message: str):
+        """Warn the operator when the post-measurement SMU reset failed."""
+        self.statusBar().showMessage("Critical: SMU reset failed")
+        QMessageBox.critical(self, "SMU Reset Failed", message)
 
     def on_aborted(self):
         """Handle measurement abort (no partial data)."""

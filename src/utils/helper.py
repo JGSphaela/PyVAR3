@@ -1,10 +1,20 @@
 # src/utils/helper.py
 
 import json
-import os
+from importlib import resources
+
+
+SUPPORTED_LANGUAGES = {"en", "ja"}
+
 
 def load_translations(language_code: str) -> dict:
-    file_path = os.path.join(os.path.dirname(__file__), f"../gui/translations/{language_code}.json")
-    with open(file_path, 'r', encoding='utf-8') as file:
-        translations = json.load(file)
-    return translations
+    """Load GUI translation JSON from packaged resources."""
+    if language_code not in SUPPORTED_LANGUAGES:
+        raise ValueError(
+            f"Unsupported language {language_code!r}. "
+            f"Supported languages: {sorted(SUPPORTED_LANGUAGES)}"
+        )
+
+    translation_path = resources.files("src.gui").joinpath("translations", f"{language_code}.json")
+    with translation_path.open("r", encoding="utf-8") as file:
+        return json.load(file)

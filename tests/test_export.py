@@ -1,7 +1,6 @@
 """Tests for CSV export with metadata."""
 
 import os
-import pytest
 import pandas as pd
 
 from src.data_process.export import export_with_metadata, read_csv_with_metadata

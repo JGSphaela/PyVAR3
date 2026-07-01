@@ -63,3 +63,24 @@ def test_interactive_plot_accepts_raw_b1500_measurement_columns(tmp_path):
     assert fig.layout.scene.xaxis.title.text == "A_V"
     assert fig.layout.scene.yaxis.title.text == "B_V"
     assert fig.layout.scene.zaxis.title.text == "A_I"
+
+
+def test_interactive_plot_accepts_two_voltage_column_csv_without_empty_traces(tmp_path):
+    csv_path = tmp_path / "two_way_measurement.csv"
+    csv_path.write_text(
+        "A_I,A_V,B_V\n"
+        "1e-9,0.0,0.0\n"
+        "2e-9,0.1,0.0\n"
+        "3e-9,0.0,0.1\n"
+        "4e-9,0.1,0.1\n"
+    )
+
+    from src.data_process.plot3d3 import plot_interactive_currents
+
+    fig = plot_interactive_currents(csv_path)
+
+    assert len(fig.data) == 2
+    assert all(len(trace.x) > 0 for trace in fig.data)
+    assert fig.layout.scene.xaxis.title.text == "A_V"
+    assert fig.layout.scene.yaxis.title.text == "B_V"
+    assert fig.layout.scene.zaxis.title.text == "A_I"

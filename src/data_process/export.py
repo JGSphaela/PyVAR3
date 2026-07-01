@@ -30,7 +30,7 @@ def export_with_metadata(df: pd.DataFrame, config: MeasurementConfig, filepath: 
 
     with open(path, 'w', newline='') as f:
         # Write metadata header
-        f.write(f"# PyVAR3 Measurement Data\n")
+        f.write("# PyVAR3 Measurement Data\n")
         f.write(f"# gpib_device_id: {config.gpib_device_id}\n")
 
         for key, value in config.metadata.items():

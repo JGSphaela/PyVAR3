@@ -131,7 +131,7 @@ class B1500GPIBCommand:
         self.communication.send_command(command)
 
     def force_voltage(self, channel: int, v_range: int, voltage: float, icomp: Optional[float] = None,
-                      comp_polarity: Optional[int] = 0, i_range: Optional[int] = None) -> None:
+                      comp_polarity: Optional[int] = None, i_range: Optional[int] = None) -> None:
         """
         Forces DC voltage from the specified SMU.
 
@@ -151,14 +151,14 @@ class B1500GPIBCommand:
         command = f"DV {channel},{v_range},{voltage}"
         if icomp is not None:
             command += f",{icomp}"
-        if comp_polarity is not None:
-            command += f",{comp_polarity}"
-        if i_range is not None:
-            command += f",{i_range}"
+            if comp_polarity is not None:
+                command += f",{comp_polarity}"
+            if i_range is not None:
+                command += f",{i_range}"
         self.communication.send_command(command)
 
     def force_current(self, channel: int, i_range: int, current: float, vcomp: Optional[float] = None,
-                      comp_polarity: Optional[int] = 0, v_range: Optional[int] = None) -> None:
+                      comp_polarity: Optional[int] = None, v_range: Optional[int] = None) -> None:
         """
         Forces constant current from the specified SMU.
 
@@ -172,10 +172,10 @@ class B1500GPIBCommand:
         command = f"DI {channel},{i_range},{current}"
         if vcomp is not None:
             command += f",{vcomp}"
-        if comp_polarity is not None:
-            command += f",{comp_polarity}"
-        if v_range is not None:
-            command += f",{v_range}"
+            if comp_polarity is not None:
+                command += f",{comp_polarity}"
+            if v_range is not None:
+                command += f",{v_range}"
         self.communication.send_command(command)
 
     # Note: can be rewritten in the future to better comply with the official syntax

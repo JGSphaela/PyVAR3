@@ -28,9 +28,8 @@ class TestDataIntoDataframe:
         """Verify columns are sorted by data_type then channel."""
         df = DataProcess.data_into_dataframe(sample_b1500_response)
         columns = list(df.columns)
-        # Extract data_type and channel from column names
+        # Extract data_type from column names
         data_types = [col.split('_')[1] for col in columns]
-        channels = [col.split('_')[0] for col in columns]
         # Data types should be sorted
         assert data_types == sorted(data_types)
 
@@ -50,8 +49,7 @@ class TestDataIntoDataframe:
         assert len(df) == 0
 
     def test_parse_empty_string(self):
-        """Verify handling of empty input raises PyVARError (counter > 6 with no status codes)."""
-        from src.gpib.exceptions import PyVARError
+        """Verify handling of empty input returns an empty DataFrame."""
         # Empty string produces no entries, which means counter stays at 0
         # This actually works fine and returns an empty DataFrame
         df = DataProcess.data_into_dataframe("")

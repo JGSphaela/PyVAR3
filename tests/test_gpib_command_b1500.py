@@ -80,7 +80,6 @@ class TestVoltageSweep:
 
     def test_set_voltage_sweep_custom_limit(self, mock_communication):
         """Voltage limit is configurable via constructor."""
-        from unittest.mock import MagicMock
         cmd = B1500GPIBCommand(voltage_limit=5.0)
         cmd.communication = mock_communication
         # 3.0V should be OK with 5V limit
@@ -89,13 +88,17 @@ class TestVoltageSweep:
 
 class TestForceVoltage:
     def test_force_voltage(self, b1500, mock_device):
-        """comp_polarity defaults to 0, so it appears in the command."""
+        """No compliance value means no trailing compliance fields."""
         b1500.force_voltage(channel=1, v_range=0, voltage=1.0)
-        mock_device.write.assert_called_with("DV 1,0,1.0,0")
+        mock_device.write.assert_called_with("DV 1,0,1.0")
 
     def test_force_voltage_with_compliance(self, b1500, mock_device):
-        b1500.force_voltage(channel=1, v_range=0, voltage=0.5, icomp=0.01)
+        b1500.force_voltage(channel=1, v_range=0, voltage=0.5, icomp=0.01, comp_polarity=0)
         mock_device.write.assert_called_with("DV 1,0,0.5,0.01,0")
+
+    def test_force_voltage_ignores_optional_fields_without_compliance(self, b1500, mock_device):
+        b1500.force_voltage(channel=1, v_range=0, voltage=0.5, comp_polarity=0, i_range=0)
+        mock_device.write.assert_called_with("DV 1,0,0.5")
 
     def test_force_voltage_limit_exceeded(self, b1500):
         with pytest.raises(VoltageLimitError, match="exceeds limit"):

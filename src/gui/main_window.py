@@ -1,5 +1,4 @@
 from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox, QFileDialog
-from PyQt6.QtCore import Qt
 from src.gpib.gpib_communication import GPIBCommunication
 from src.utils.helper import load_translations
 from src.gui.plotly_viewer import PlotlyViewer
@@ -93,7 +92,7 @@ class MainWindow(QMainWindow):
         try:
             self.gpib_comm.connect_device("GPIB0::1::INSTR")  # Replace with your actual GPIB address
             self.gpib_comm.send_command("*IDN?")
-            response = self.gpib_comm.read_response()
+            self.gpib_comm.read_response()
             QMessageBox.information(self, "Success", self.translations["success_message"])
         except Exception as e:
             self.show_error(str(e))

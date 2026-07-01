@@ -8,7 +8,6 @@ errors, and abort.
 import logging
 import threading
 
-import pandas as pd
 from PySide6.QtCore import QThread, Signal
 
 from src.gpib.exceptions import MeasurementAbortedError, PyVARError

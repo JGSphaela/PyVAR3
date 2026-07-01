@@ -85,12 +85,15 @@ class SweepWindow(QWidget):
         self.setLayout(self.v_layout)
 
     def add_sweep_channel(self):
+        existing_values = [widget.get_values() for widget in self.sweep_widget.widgets]
         self.sweep_count += 1
 
         # Remove the existing SweepWidgetGroup and add a new one with the updated sweep_count
         self.v_layout.removeWidget(self.sweep_widget)
         self.sweep_widget.deleteLater()  # Remove the old widget from the layout
         self.sweep_widget = SweepWidgetGroup(sweep_count=self.sweep_count)
+        for widget, values in zip(self.sweep_widget.widgets, existing_values):
+            widget.set_values(values)
         self.v_layout.insertWidget(2, self.sweep_widget)  # Insert after the h_layout
 
         if self.sweep_count >= MAX_SWEEP_CHANNELS:

@@ -37,7 +37,7 @@ class TestQueryTemperature:
 
     def test_query_celsius_channel_b(self, model335, mock_device):
         mock_device.query.return_value = "+120.5\r\n"
-        result = model335.query_celsius(input_channel="B")
+        assert model335.query_celsius(input_channel="B") == "+120.5\r\n"
         mock_device.query.assert_called_with("CRDG? B")
 
     def test_query_kelvin_default_channel(self, model335, mock_device):
@@ -48,5 +48,5 @@ class TestQueryTemperature:
 
     def test_query_kelvin_channel_b(self, model335, mock_device):
         mock_device.query.return_value = "+6.50\r\n"
-        result = model335.query_kelvin(input_channel="B")
+        assert model335.query_kelvin(input_channel="B") == "+6.50\r\n"
         mock_device.query.assert_called_with("KRDG? B")

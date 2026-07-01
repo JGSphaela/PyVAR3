@@ -1,9 +1,4 @@
 # debug_tests/three_way_sweep.py
-import time
-
-from src.gpib.gpib_communication import GPIBCommunication
-from src.gpib.gpib_command_b1500 import B1500GPIBCommand
-from src.measurement.basic_sweep import BasicTest
 from src.measurement.advance_sweep import AdvanceTest
 
 

@@ -1,7 +1,3 @@
-import pandas as pd
-import re
-import matplotlib.pyplot as plt
-
 from src.data_process.read_data_process import DataProcess
 
 data_process = DataProcess()

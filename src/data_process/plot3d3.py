@@ -85,15 +85,19 @@ def plot_interactive_currents(
         raise ValueError("CSV does not contain any requested current columns")
 
     y_values = data[y_column].unique()
-    line_values = data[line_column].unique()
     colors = plt.cm.viridis(np.linspace(0, 1, max(len(y_values), 1)))
 
     fig = go.Figure()
     for current_column in available_currents:
         for y_idx, y_value in enumerate(y_values):
             y_data = data[data[y_column] == y_value]
-            for line_value in line_values:
-                line_data = y_data[y_data[line_column] == line_value]
+            line_groups = [(y_value, y_data)] if line_column == y_column else [
+                (line_value, y_data[y_data[line_column] == line_value])
+                for line_value in data[line_column].unique()
+            ]
+            for line_value, line_data in line_groups:
+                if line_data.empty:
+                    continue
                 rgba = colors[y_idx]
                 fig.add_trace(go.Scatter3d(
                     x=line_data[x_column],

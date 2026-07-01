@@ -1,7 +1,7 @@
 """Tests for GPIBCommunication — the core PyVISA wrapper."""
 
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 import pyvisa
 
 from src.gpib.gpib_communication import GPIBCommunication
@@ -10,7 +10,7 @@ from src.gpib.exceptions import DeviceNotConnectedError, GPIBError
 
 class TestGPIBCommunicationInit:
     def test_init_success(self):
-        with patch('src.gpib.gpib_communication.pyvisa.ResourceManager') as mock_rm:
+        with patch('src.gpib.gpib_communication.pyvisa.ResourceManager'):
             comm = GPIBCommunication()
             assert comm.rm is not None
             assert comm.device is None

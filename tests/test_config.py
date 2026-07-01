@@ -1,6 +1,5 @@
 """Tests for measurement configuration dataclasses."""
 
-import pytest
 from src.measurement.config import SweepChannelConfig, MeasurementConfig
 
 

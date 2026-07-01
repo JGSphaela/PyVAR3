@@ -1,5 +1,4 @@
 # debug_tests/gpib_command_b1500.py
-import time
 
 from src.gpib.gpib_communication import GPIBCommunication
 from src.gpib.gpib_command_b1500 import B1500GPIBCommand

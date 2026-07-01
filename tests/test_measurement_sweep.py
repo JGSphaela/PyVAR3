@@ -7,7 +7,7 @@ Includes regression test for:
 import os
 import pytest
 import pandas as pd
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import patch
 
 from src.measurement.basic_sweep import BasicTest
 from src.measurement.advance_sweep import AdvanceTest

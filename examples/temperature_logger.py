@@ -1,7 +1,6 @@
 import time
 import csv
 import threading
-import sys
 import os
 from datetime import datetime
 from src.gpib.gpib_command_model335 import Model335GPIBCommand

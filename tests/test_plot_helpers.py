@@ -41,3 +41,25 @@ def test_plot_helpers_accept_explicit_csv_path(tmp_path):
     assert ax_3d is not None
     assert len(plotly_fig.data) > 0
     assert len(interactive_fig.data) > 0
+
+
+def test_interactive_plot_accepts_raw_b1500_measurement_columns(tmp_path):
+    csv_path = tmp_path / "raw_measurement.csv"
+    csv_path.write_text(
+        "# PyVAR3 Measurement Data\n"
+        "# sweep1: channel=1 mode=1 range=0 start=0.0 stop=0.1 step=2 compliance=0.1\n"
+        "A_I,A_V,B_V,C_V\n"
+        "1e-9,0.0,0.0,0.0\n"
+        "2e-9,0.1,0.0,0.0\n"
+        "3e-9,0.0,0.1,0.0\n"
+        "4e-9,0.1,0.1,0.0\n"
+    )
+
+    from src.data_process.plot3d3 import plot_interactive_currents
+
+    fig = plot_interactive_currents(csv_path)
+
+    assert len(fig.data) > 0
+    assert fig.layout.scene.xaxis.title.text == "A_V"
+    assert fig.layout.scene.yaxis.title.text == "B_V"
+    assert fig.layout.scene.zaxis.title.text == "A_I"

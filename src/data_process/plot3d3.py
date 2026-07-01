@@ -8,34 +8,75 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from typing import Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
+LEGACY_X_COLUMN = "Gate_V"
+LEGACY_Y_COLUMN = "Sub_V"
+LEGACY_LINE_COLUMN = "Drain_V"
+LEGACY_CURRENT_COLUMNS = ("Drain_I", "Gate_I", "Source_I", "Sub_I")
+
+
+def _infer_plot_columns(columns: Sequence[str]) -> tuple[str, str, str, tuple[str, ...]]:
+    """Infer plotting columns from either legacy or raw B1500 column names.
+
+    Older ad-hoc CSVs used semantic names such as ``Gate_V``/``Drain_I``.
+    GUI/exported CSVs keep the raw B1500 channel names such as
+    ``A_I``, ``A_V``, ``B_V``, and ``C_V``. This helper supports both.
+    """
+    column_set = set(columns)
+    legacy_voltage_columns = {LEGACY_X_COLUMN, LEGACY_Y_COLUMN, LEGACY_LINE_COLUMN}
+    legacy_current_columns = tuple(column for column in LEGACY_CURRENT_COLUMNS if column in column_set)
+    if legacy_voltage_columns <= column_set and legacy_current_columns:
+        return LEGACY_X_COLUMN, LEGACY_Y_COLUMN, LEGACY_LINE_COLUMN, legacy_current_columns
+
+    voltage_columns = tuple(column for column in columns if column.endswith("_V"))
+    current_columns = tuple(column for column in columns if column.endswith("_I"))
+    if len(voltage_columns) < 2:
+        raise ValueError(
+            "CSV needs at least two voltage columns for interactive plotting. "
+            f"Found voltage columns: {list(voltage_columns)}"
+        )
+    if not current_columns:
+        raise ValueError("CSV does not contain any current columns ending in '_I'")
+
+    x_column = voltage_columns[0]
+    y_column = voltage_columns[1]
+    line_column = voltage_columns[2] if len(voltage_columns) >= 3 else y_column
+    return x_column, y_column, line_column, current_columns
+
 
 def plot_interactive_currents(
     csv_path: str | Path,
     *,
-    x_column: str = "Gate_V",
-    y_column: str = "Sub_V",
-    line_column: str = "Drain_V",
-    current_columns: tuple[str, ...] = ("Drain_I", "Gate_I", "Source_I", "Sub_I"),
+    x_column: str | None = None,
+    y_column: str | None = None,
+    line_column: str | None = None,
+    current_columns: tuple[str, ...] | None = None,
 ) -> go.Figure:
     """Create an interactive 3D Plotly figure with current-column dropdowns.
 
     Args:
         csv_path: Measurement CSV to read. Metadata comment lines are ignored.
-        x_column: Column to use as the x axis.
-        y_column: Column to use as the y axis.
-        line_column: Column used to draw multiple traces per y-axis slice.
-        current_columns: Current columns exposed in the dropdown.
+        x_column: Column to use as the x axis. Inferred when omitted.
+        y_column: Column to use as the y axis. Inferred when omitted.
+        line_column: Column used to draw multiple traces per y-axis slice. Inferred when omitted.
+        current_columns: Current columns exposed in the dropdown. Inferred when omitted.
 
     Returns:
         A Plotly ``Figure``.
     """
     data = pd.read_csv(csv_path, comment="#")
+    inferred_x, inferred_y, inferred_line, inferred_currents = _infer_plot_columns(tuple(data.columns))
+    x_column = x_column or inferred_x
+    y_column = y_column or inferred_y
+    line_column = line_column or inferred_line
+    current_columns = current_columns or inferred_currents
+
     available_currents = tuple(column for column in current_columns if column in data.columns)
     missing = {x_column, y_column, line_column} - set(data.columns)
     if missing:

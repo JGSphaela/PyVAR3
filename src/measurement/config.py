@@ -41,6 +41,8 @@ class SweepChannelConfig:
             errors.append(f"Step count must be > 0, got {self.step}")
         if self.step and self.step > 0 and self.start == self.stop and self.step > 1:
             errors.append(f"Start and stop are equal ({self.start}) but step > 1 ({self.step})")
+        if self.power_compliance is not None and self.current_compliance is None:
+            errors.append("Power compliance requires current compliance")
         return errors
 
 

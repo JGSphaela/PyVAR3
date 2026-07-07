@@ -69,6 +69,18 @@ class TestVoltageSweep:
         b1500.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=101, icomp=0.01, pcomp=0.1)
         mock_device.write.assert_called_with("WV 1,1,0,0.0,1.0,101,0.01,0.1")
 
+    def test_set_voltage_sweep_rejects_power_compliance_without_current_compliance(self, b1500):
+        with pytest.raises(ValueError, match="pcomp requires icomp"):
+            b1500.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=1.0, step=101, pcomp=0.1)
+
+    def test_set_current_sweep_with_compliance(self, b1500, mock_device):
+        b1500.set_current_sweep(channel=1, mode=1, i_range=0, start=0.0, stop=1e-6, step=101, vcomp=0.5, pcomp=0.1)
+        mock_device.write.assert_called_with("WI 1,1,0,0.0,1e-06,101,0.5,0.1")
+
+    def test_set_current_sweep_rejects_power_compliance_without_voltage_compliance(self, b1500):
+        with pytest.raises(ValueError, match="pcomp requires vcomp"):
+            b1500.set_current_sweep(channel=1, mode=1, i_range=0, start=0.0, stop=1e-6, step=101, pcomp=0.1)
+
     def test_set_voltage_sweep_limit_exceeded(self, b1500):
         with pytest.raises(VoltageLimitError, match="exceeds limit"):
             b1500.set_voltage_sweep(channel=1, mode=1, v_range=0, start=0.0, stop=3.0, step=101)
@@ -96,6 +108,10 @@ class TestForceVoltage:
         b1500.force_voltage(channel=1, v_range=0, voltage=0.5, icomp=0.01, comp_polarity=0)
         mock_device.write.assert_called_with("DV 1,0,0.5,0.01,0")
 
+    def test_force_voltage_preserves_default_polarity_before_range(self, b1500, mock_device):
+        b1500.force_voltage(channel=1, v_range=0, voltage=0.5, icomp=0.01, i_range=11)
+        mock_device.write.assert_called_with("DV 1,0,0.5,0.01,0,11")
+
     def test_force_voltage_ignores_optional_fields_without_compliance(self, b1500, mock_device):
         b1500.force_voltage(channel=1, v_range=0, voltage=0.5, comp_polarity=0, i_range=0)
         mock_device.write.assert_called_with("DV 1,0,0.5")
@@ -103,6 +119,10 @@ class TestForceVoltage:
     def test_force_voltage_limit_exceeded(self, b1500):
         with pytest.raises(VoltageLimitError, match="exceeds limit"):
             b1500.force_voltage(channel=1, v_range=0, voltage=2.5)
+
+    def test_force_current_preserves_default_polarity_before_range(self, b1500, mock_device):
+        b1500.force_current(channel=1, i_range=0, current=1e-6, vcomp=0.5, v_range=11)
+        mock_device.write.assert_called_with("DI 1,0,1e-06,0.5,0,11")
 
     def test_set_voltage_limit_runtime(self, b1500):
         """Voltage limit can be changed at runtime."""
@@ -156,6 +176,14 @@ class TestSweepDelay:
         b1500.sweep_delay(hold=0, delay=0, sdelay=0, tdelay=0, mdelay=0)
         cmd = mock_device.write.call_args[0][0]
         assert cmd == "WT 0,0,0,0,0"
+
+    def test_sweep_delay_preserves_default_step_delay_before_trigger_delay(self, b1500, mock_device):
+        b1500.sweep_delay(hold=0, delay=0, tdelay=0.2)
+        mock_device.write.assert_called_with("WT 0,0,0,0.2")
+
+    def test_sweep_delay_preserves_default_intermediate_delays_before_measure_delay(self, b1500, mock_device):
+        b1500.sweep_delay(hold=0, delay=0, mdelay=0.3)
+        mock_device.write.assert_called_with("WT 0,0,0,0,0.3")
 
 
 class TestSetAutoZero:

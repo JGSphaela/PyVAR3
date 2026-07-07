@@ -37,6 +37,11 @@ class TestSweepChannelConfig:
         errors = ch.validate()
         assert any("Step count must be > 0" in e for e in errors)
 
+    def test_validate_power_compliance_requires_current_compliance(self):
+        ch = SweepChannelConfig(channel=1, start=0.0, stop=1.0, step=101, power_compliance=0.1)
+        errors = ch.validate()
+        assert any("Power compliance requires current compliance" in e for e in errors)
+
 
 class TestMeasurementConfig:
     def test_empty_config_validation(self):

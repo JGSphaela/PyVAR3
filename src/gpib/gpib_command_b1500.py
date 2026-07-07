@@ -102,6 +102,9 @@ class B1500GPIBCommand:
                 f"Sweep voltage {start}V–{stop}V exceeds limit of {self.voltage_limit}V."
             )
 
+        if pcomp is not None and icomp is None:
+            raise ValueError("pcomp requires icomp to preserve WV positional fields")
+
         command = f"WV {channel},{mode},{v_range},{start},{stop},{step}"
         if icomp is not None:
             command += f",{icomp}"
@@ -123,6 +126,9 @@ class B1500GPIBCommand:
         :param vcomp: Voltage compliance (optional).
         :param pcomp: Power compliance (optional).
         """
+        if pcomp is not None and vcomp is None:
+            raise ValueError("pcomp requires vcomp to preserve WI positional fields")
+
         command = f"WI {channel},{mode},{i_range},{start},{stop},{step}"
         if vcomp is not None:
             command += f",{vcomp}"
@@ -151,8 +157,8 @@ class B1500GPIBCommand:
         command = f"DV {channel},{v_range},{voltage}"
         if icomp is not None:
             command += f",{icomp}"
-            if comp_polarity is not None:
-                command += f",{comp_polarity}"
+            if comp_polarity is not None or i_range is not None:
+                command += f",{0 if comp_polarity is None else comp_polarity}"
             if i_range is not None:
                 command += f",{i_range}"
         self.communication.send_command(command)
@@ -172,8 +178,8 @@ class B1500GPIBCommand:
         command = f"DI {channel},{i_range},{current}"
         if vcomp is not None:
             command += f",{vcomp}"
-            if comp_polarity is not None:
-                command += f",{comp_polarity}"
+            if comp_polarity is not None or v_range is not None:
+                command += f",{0 if comp_polarity is None else comp_polarity}"
             if v_range is not None:
                 command += f",{v_range}"
         self.communication.send_command(command)
@@ -321,10 +327,10 @@ class B1500GPIBCommand:
         :param mdelay: Step measurement trigger delay time in seconds.
         """
         command = f"WT {hold},{delay}"
-        if sdelay is not None:
-            command += f",{sdelay}"
-        if tdelay is not None:
-            command += f",{tdelay}"
+        if sdelay is not None or tdelay is not None or mdelay is not None:
+            command += f",{0 if sdelay is None else sdelay}"
+        if tdelay is not None or mdelay is not None:
+            command += f",{0 if tdelay is None else tdelay}"
         if mdelay is not None:
             command += f",{mdelay}"
         self.communication.send_command(command)

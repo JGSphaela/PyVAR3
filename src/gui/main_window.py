@@ -1,5 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox, QFileDialog
 from src.gpib.gpib_communication import GPIBCommunication
 from src.utils.helper import load_translations
 from src.gui.plotly_viewer import PlotlyViewer
@@ -58,8 +57,12 @@ class MainWindow(QMainWindow):
         language_dropdown.addItems(["English", "日本語"])
         language_dropdown.currentIndexChanged.connect(self.change_language)
 
-        self.tabs.setCornerWidget(language_label, Qt.Corner.TopLeftCorner)
-        self.tabs.setCornerWidget(language_dropdown, Qt.Corner.TopRightCorner)
+        corner_widget = QWidget()
+        corner_layout = QVBoxLayout(corner_widget)
+        corner_layout.setContentsMargins(0, 0, 0, 0)
+        corner_layout.addWidget(language_label)
+        corner_layout.addWidget(language_dropdown)
+        self.tabs.setCornerWidget(corner_widget)
 
     def change_language(self, index):
         if index == 0:
@@ -89,14 +92,25 @@ class MainWindow(QMainWindow):
         try:
             self.gpib_comm.connect_device("GPIB0::1::INSTR")  # Replace with your actual GPIB address
             self.gpib_comm.send_command("*IDN?")
-            response = self.gpib_comm.read_response()
+            self.gpib_comm.read_response()
             QMessageBox.information(self, "Success", self.translations["success_message"])
         except Exception as e:
             self.show_error(str(e))
 
     def show_plotly_viewer(self):
-        self.plotly_viewer = PlotlyViewer(self)
-        self.plotly_viewer.show()
+        csv_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Measurement CSV",
+            "",
+            "CSV Files (*.csv);;All Files (*)",
+        )
+        if not csv_path:
+            return
+        try:
+            self.plotly_viewer = PlotlyViewer(csv_path, self)
+            self.plotly_viewer.show()
+        except Exception as e:
+            self.show_error(str(e))
 
     def show_error(self, message):
         QMessageBox.critical(self, "Error", message)

@@ -1,43 +1,82 @@
-import pandas as pd
+"""Plotly 3D plotting helpers for PyVAR3 measurement CSV files.
+
+This module is import-safe: it does not load example data or open a plot window
+until ``plot_3d_plotly`` or ``main`` is called.
+"""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 
-# Load the data
-data = pd.read_csv('../../debug_tests/data/Jan_No3Vg_2.csv')
 
-# Extract unique values for the sweeps
-sub_v_values = data['Sub_V'].unique()
-drain_v_values = data['Drain_V'].unique()
+def plot_3d_plotly(
+    csv_path: str | Path,
+    *,
+    x_column: str = "Gate_V",
+    y_column: str = "Sub_V",
+    z_column: str = "Gate_I",
+    line_column: str = "Drain_V",
+) -> go.Figure:
+    """Create a Plotly 3D line plot for a measurement CSV.
 
-# Create a figure
-fig = go.Figure()
+    Args:
+        csv_path: Measurement CSV to read. Metadata comment lines are ignored.
+        x_column: Column to use as the x axis.
+        y_column: Column to use as the y axis.
+        z_column: Column to use as the z axis.
+        line_column: Column used to draw multiple traces per y-axis slice.
 
-colors = plt.cm.viridis(np.linspace(0, 1, len(sub_v_values)))
+    Returns:
+        A Plotly ``Figure``.
+    """
+    data = pd.read_csv(csv_path, comment="#")
+    missing = {x_column, y_column, z_column, line_column} - set(data.columns)
+    if missing:
+        raise ValueError(f"CSV is missing required columns: {sorted(missing)}")
 
-# Add traces for each plane (Sub_V)
-for j, sub_v in enumerate(sub_v_values):
-    sub_v_data = data[data['Sub_V'] == sub_v]
-    for i, drain_v in enumerate(drain_v_values):
-        drain_v_data = sub_v_data[sub_v_data['Drain_V'] == drain_v]
-        fig.add_trace(go.Scatter3d(
-            x=drain_v_data['Gate_V'],
-            y=[sub_v] * len(drain_v_data),
-            z=drain_v_data['Gate_I'],
-            mode='lines',
-            line=dict(color=f'rgba({colors[i][0] * 255},{colors[i][1] * 255},{colors[i][2] * 255},1)'),
-            name=f"Drain_V={drain_v}"
-        ))
+    y_values = data[y_column].unique()
+    line_values = data[line_column].unique()
+    colors = plt.cm.viridis(np.linspace(0, 1, max(len(line_values), 1)))
 
-# Set labels
-fig.update_layout(
-    scene=dict(
-        xaxis_title='Gate_V',
-        yaxis_title='Sub_V',
-        zaxis_title='Drain_I'
-    ),
-    title='3D Plot of Drain_I vs Gate_V and Sub_V for different Drain_V values'
-)
+    fig = go.Figure()
+    for y_value in y_values:
+        y_data = data[data[y_column] == y_value]
+        for line_idx, line_value in enumerate(line_values):
+            line_data = y_data[y_data[line_column] == line_value]
+            rgba = colors[line_idx]
+            fig.add_trace(go.Scatter3d(
+                x=line_data[x_column],
+                y=[y_value] * len(line_data),
+                z=line_data[z_column],
+                mode="lines",
+                line=dict(color=f"rgba({rgba[0] * 255},{rgba[1] * 255},{rgba[2] * 255},1)"),
+                name=f"{line_column}={line_value}",
+            ))
 
-# Show the figure
-fig.show()
+    fig.update_layout(
+        scene=dict(
+            xaxis_title=x_column,
+            yaxis_title=y_column,
+            zaxis_title=z_column,
+        ),
+        title=f"3D plot of {z_column} vs {x_column} and {y_column}",
+    )
+    return fig
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Plot a 3D PyVAR3 measurement CSV with Plotly.")
+    parser.add_argument("csv_path", help="Measurement CSV to plot")
+    args = parser.parse_args()
+
+    plot_3d_plotly(args.csv_path).show()
+
+
+if __name__ == "__main__":
+    main()

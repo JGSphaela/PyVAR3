@@ -1,7 +1,13 @@
 # src/data_process/read_data_process.py
 
-import pandas as pd
+import logging
 import re
+
+import pandas as pd
+
+from src.gpib.exceptions import PyVARError
+
+logger = logging.getLogger(__name__)
 
 '''
 FMT 11 should be used. Error status is not yet handled.
@@ -16,6 +22,17 @@ class DataProcess:
 
     @staticmethod
     def data_into_dataframe(data_read: str) -> pd.DataFrame:
+        """
+        Parse raw B1500 measurement response string into a structured DataFrame.
+
+        The raw response is a comma-separated string of encoded measurement values.
+        Each value follows the pattern: [Status][Channel][Data_Type][Value]
+        where Status is 'W' (intermediate step) or 'E' (final step).
+
+        :param data_read: Raw comma-separated response string from B1500.
+        :return: DataFrame with columns named as '{Channel}_{Data_Type}' (e.g. 'A_I', 'B_V').
+        :raises PyVARError: If the data contains no sweep voltage or has wrong module settings.
+        """
         entries = data_read.split(',')  # Split input data
 
         status = []
@@ -34,7 +51,10 @@ class DataProcess:
                 values.append(float(match.group(4)))
 
         df = pd.DataFrame({'Status': status, 'Channel': channel, 'Data_Type': data_type, 'Value': values})
-        print(df)
+        logger.debug(f"Parsed {len(df)} entries from raw data")
+
+        if df.empty:
+            return pd.DataFrame()
 
         unique_combinations = sorted(set(df['Channel'] + '_' + df['Data_Type']))
 
@@ -52,7 +72,7 @@ class DataProcess:
             if counter > 6:
                 with open('error_input_data.txt', 'w') as file:
                     file.write(data_read)
-                raise Exception('No Sweep Voltage in data or module setting wrong, check FMT and MM settings')
+                raise PyVARError('No Sweep Voltage in data or module setting wrong, check FMT and MM settings')
             elif row['Status'] == 'E':  # E means data for the last sweep step
                 reshaped_data.append(current_row.copy())
                 break

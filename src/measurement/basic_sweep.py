@@ -1,0 +1,157 @@
+# src/measurement/basic_sweep.py
+
+import logging
+import os
+from typing import Optional
+
+import pandas as pd
+
+from src.gpib.exceptions import PyVARError
+from src.gpib.gpib_command_b1500 import B1500GPIBCommand
+from src.data_process.read_data_process import DataProcess
+
+logger = logging.getLogger(__name__)
+
+
+class BasicTest:
+    """Orchestrates a single multichannel voltage sweep measurement on the B1500.
+
+    Handles instrument initialization (ADC, channels, measurement mode) on the first call,
+    then performs the sweep and returns parsed measurement data as a DataFrame.
+
+    The `counter` parameter controls whether pre-test setup is skipped — used by
+    AdvanceTest to avoid re-sending setup commands in nested sweep loops.
+    """
+
+    def __init__(self):
+        self.command = B1500GPIBCommand()
+        self.data_process = DataProcess()
+
+    def multichannel_sweep_voltage(self, gpib_device_id: int = 17, sweep_channel: int = 1, sweep_mode: int = 1,
+                                   sweep_range: int = 0, sweep_start: float = 0.0, sweep_stop: float = 0.0,
+                                   sweep_step: int = 0, sweep_current_compliance: Optional[float] = None,
+                                   sweep_power_compliance: Optional[float] = None,
+                                   const1_channel: Optional[int] = None,
+                                   const1_range: Optional[int] = None, const1_voltage: Optional[float] = None,
+                                   const1_current_compliance: Optional[float] = None,
+                                   const1_current_compliance_polarity: Optional[float] = None,
+                                   const1_current_range: Optional[int] = None,
+                                   const2_channel: Optional[int] = None,
+                                   const2_range: Optional[int] = None, const2_voltage: Optional[float] = None,
+                                   const2_current_compliance: Optional[float] = None,
+                                   const2_current_compliance_polarity: Optional[float] = None,
+                                   const2_current_range: Optional[int] = None,
+                                   const3_channel: Optional[int] = None,
+                                   const3_range: Optional[int] = None, const3_voltage: Optional[float] = None,
+                                   const3_current_compliance: Optional[float] = None,
+                                   const3_current_compliance_polarity: Optional[float] = None,
+                                   const3_current_range: Optional[int] = None,
+                                   const4_channel: Optional[int] = None,
+                                   const4_range: Optional[int] = None, const4_voltage: Optional[float] = None,
+                                   const4_current_compliance: Optional[float] = None,
+                                   const4_current_compliance_polarity: Optional[float] = None,
+                                   const4_current_range: Optional[int] = None,
+                                   counter: Optional[int] = None) -> pd.DataFrame:
+        """Execute a single multichannel voltage sweep.
+
+        On the first call (counter is None or 0), initializes the instrument:
+        sets output format, configures ADC, enables channels, and sets the sweep.
+        On subsequent calls (counter > 0), only updates constant voltages and triggers.
+
+        :param gpib_device_id: GPIB address of the B1500.
+        :param sweep_channel: SMU channel for the sweep.
+        :param sweep_mode: Sweep mode (1 = linear, 2 = log, etc.).
+        :param sweep_range: Voltage range of the sweep.
+        :param sweep_start: Start voltage of the sweep.
+        :param sweep_stop: Stop voltage of the sweep.
+        :param sweep_step: Number of measurement steps.
+        :param sweep_current_compliance: Current compliance for sweep channel.
+        :param sweep_power_compliance: Power compliance for sweep channel.
+        :param counter: If None/0, runs full pre-test setup. If > 0, skips setup.
+        :return: DataFrame with measurement data (currents and voltages per step).
+        :raises PyVARError: If output data rows don't match sweep steps.
+        """
+
+        # a hack to make sure pretest commands are only send once.
+        if not counter:
+            # Pretest prep
+            # note: FMT is needed to get sweep voltage output
+            self.command.init_connection(gpib_device_id)
+            self.command.set_output_format(11, 1)  # FMT 11 ensures highest accuracy
+
+            # Get all in-use channels
+            all_channels = [sweep_channel]
+            if const1_channel is not None:
+                all_channels.append(const1_channel)
+            if const2_channel is not None:
+                all_channels.append(const2_channel)
+            if const3_channel is not None:
+                all_channels.append(const3_channel)
+            if const4_channel is not None:
+                all_channels.append(const4_channel)
+
+            if const1_channel is not None or const2_channel is not None or const3_channel is not None or const4_channel is not None:
+                all_channels = sorted(all_channels)
+
+            for channel in all_channels:
+                self.command.set_adc_type(channel=channel, adc_type=1)
+                self.command.check_error()
+
+            # Set integration time
+            self.command.set_adc_mode(adc_type=1, mode=0, coefficient=6)
+            self.command.check_error()
+
+            # Set auto zero ON
+            self.command.set_auto_zero(mode=1)
+            self.command.check_error()
+
+            # Set measurement mode
+            self.command.set_measurement_mode(mode=16, channels=all_channels)
+            self.command.check_error()
+            #
+            # for channel in all_channels:
+            #     self.command.set_smu_mode(channel=channel, mode=0)
+            #     self.command.current_measurement_range(channel=channel, current_range=0)
+            #     self.command.voltage_measurement_range(channel=channel, voltage_range=0)
+            #
+            # Enable channels
+            self.command.enable_channels(all_channels)
+            self.command.check_error()
+
+            # Set voltage sweep
+            self.command.set_voltage_sweep(channel=sweep_channel, mode=sweep_mode, v_range=sweep_range, start=sweep_start,
+                                           stop=sweep_stop, step=sweep_step, icomp=sweep_current_compliance,
+                                           pcomp=sweep_power_compliance)
+            self.command.check_error()
+
+            # End of pretest commands
+
+        # Set constant voltage
+        if const1_channel is not None:
+            self.command.force_voltage(channel=const1_channel, v_range=const1_range, voltage=const1_voltage,
+                                       icomp=const1_current_compliance,
+                                       comp_polarity=const1_current_compliance_polarity,
+                                       i_range=const1_current_range)
+        if const2_channel is not None:
+            self.command.force_voltage(channel=const2_channel, v_range=const2_range, voltage=const2_voltage,
+                                       icomp=const2_current_compliance,
+                                       comp_polarity=const2_current_compliance_polarity,
+                                       i_range=const2_current_range)
+        if const3_channel is not None:
+            self.command.force_voltage(channel=const3_channel, v_range=const3_range, voltage=const3_voltage,
+                                       icomp=const3_current_compliance,
+                                       comp_polarity=const3_current_compliance_polarity,
+                                       i_range=const3_current_range)
+        if const4_channel is not None:
+            self.command.force_voltage(channel=const4_channel, v_range=const4_range, voltage=const4_voltage,
+                                       icomp=const4_current_compliance,
+                                       comp_polarity=const4_current_compliance_polarity,
+                                       i_range=const4_current_range)
+
+        out_data = self.data_process.data_into_dataframe(self.command.trigger_measurement())
+        if out_data.shape[0] != sweep_step:
+            os.makedirs('data', exist_ok=True)
+            out_data.to_csv('data/error_data.csv', index=False)
+            raise PyVARError('The number of output data does not match the sweep step, an error may occurred')
+
+        return out_data

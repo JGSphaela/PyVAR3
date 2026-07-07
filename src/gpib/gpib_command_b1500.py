@@ -1,16 +1,34 @@
 # src/gpib/gpib_command_b1500.py
 # This file implemented B1500A/B1505A/B1506A/B1507A GPIB commands.
 
+import logging
 from typing import List, Optional
+
+from src.gpib.exceptions import InstrumentError, VoltageLimitError
 from src.gpib.gpib_communication import GPIBCommunication
+
+logger = logging.getLogger(__name__)
 
 
 class B1500GPIBCommand:
-    def __init__(self):
+    def __init__(self, voltage_limit: float = 2.0):
         """
         Initializes the GPIBCommand class with a GPIBCommunication instance.
+
+        :param voltage_limit: Maximum allowed voltage in volts (default 2.0V).
+                              Used by force_voltage and set_voltage_sweep safety checks.
         """
         self.communication = GPIBCommunication()
+        self.voltage_limit = voltage_limit
+
+    def set_voltage_limit(self, limit: float) -> None:
+        """
+        Update the voltage safety limit at runtime.
+
+        :param limit: New maximum voltage in volts.
+        """
+        self.voltage_limit = limit
+        logger.info(f"Voltage limit set to {limit}V")
 
     def init_connection(self, gpib_id: int = 17):
         """
@@ -26,9 +44,9 @@ class B1500GPIBCommand:
         command = "ERR?"
         error = self.communication.query_response(command)
         if error != "0,0,0,0\r\n":
-            raise Exception("B1500 Error:" + error)
+            raise InstrumentError("B1500 Error: " + error)
         else:
-            print("B1500 OK")
+            logger.debug("B1500 OK")
 
     # # Call check_error everytime other function is called
     # def __getattribute__(self, name):
@@ -79,8 +97,13 @@ class B1500GPIBCommand:
         :param icomp: Current compliance (optional).
         :param pcomp: Power compliance (optional).
         """
-        if abs(stop) > 2:
-            raise Exception("Warning: Attempt to force high voltage on device.")
+        if abs(start) > self.voltage_limit or abs(stop) > self.voltage_limit:
+            raise VoltageLimitError(
+                f"Sweep voltage {start}V–{stop}V exceeds limit of {self.voltage_limit}V."
+            )
+
+        if pcomp is not None and icomp is None:
+            raise ValueError("pcomp requires icomp to preserve WV positional fields")
 
         command = f"WV {channel},{mode},{v_range},{start},{stop},{step}"
         if icomp is not None:
@@ -103,6 +126,9 @@ class B1500GPIBCommand:
         :param vcomp: Voltage compliance (optional).
         :param pcomp: Power compliance (optional).
         """
+        if pcomp is not None and vcomp is None:
+            raise ValueError("pcomp requires vcomp to preserve WI positional fields")
+
         command = f"WI {channel},{mode},{i_range},{start},{stop},{step}"
         if vcomp is not None:
             command += f",{vcomp}"
@@ -111,7 +137,7 @@ class B1500GPIBCommand:
         self.communication.send_command(command)
 
     def force_voltage(self, channel: int, v_range: int, voltage: float, icomp: Optional[float] = None,
-                      comp_polarity: Optional[int] = 0, i_range: Optional[int] = None) -> None:
+                      comp_polarity: Optional[int] = None, i_range: Optional[int] = None) -> None:
         """
         Forces DC voltage from the specified SMU.
 
@@ -123,20 +149,22 @@ class B1500GPIBCommand:
         :param i_range: Current compliance ranging type (optional).
         """
 
-        if abs(voltage) > 2:
-            raise Exception("Warning: Attempt to force high voltage on device.")
+        if abs(voltage) > self.voltage_limit:
+            raise VoltageLimitError(
+                f"Force voltage {voltage}V exceeds limit of {self.voltage_limit}V."
+            )
 
         command = f"DV {channel},{v_range},{voltage}"
         if icomp is not None:
             command += f",{icomp}"
-        if comp_polarity is not None:
-            command += f",{comp_polarity}"
-        if i_range is not None:
-            command += f",{i_range}"
+            if comp_polarity is not None or i_range is not None:
+                command += f",{0 if comp_polarity is None else comp_polarity}"
+            if i_range is not None:
+                command += f",{i_range}"
         self.communication.send_command(command)
 
     def force_current(self, channel: int, i_range: int, current: float, vcomp: Optional[float] = None,
-                      comp_polarity: Optional[int] = 0, v_range: Optional[int] = None) -> None:
+                      comp_polarity: Optional[int] = None, v_range: Optional[int] = None) -> None:
         """
         Forces constant current from the specified SMU.
 
@@ -150,10 +178,10 @@ class B1500GPIBCommand:
         command = f"DI {channel},{i_range},{current}"
         if vcomp is not None:
             command += f",{vcomp}"
-        if comp_polarity is not None:
-            command += f",{comp_polarity}"
-        if v_range is not None:
-            command += f",{v_range}"
+            if comp_polarity is not None or v_range is not None:
+                command += f",{0 if comp_polarity is None else comp_polarity}"
+            if v_range is not None:
+                command += f",{v_range}"
         self.communication.send_command(command)
 
     # Note: can be rewritten in the future to better comply with the official syntax
@@ -212,8 +240,9 @@ class B1500GPIBCommand:
         :param out_format: Data output format.
         :param mode: Data output mode.
         """
-        command = "FMT"
-        command += " " + str(out_format) + ',' + str(mode)
+        command = f"FMT {out_format}"
+        if mode is not None:
+            command += f",{mode}"
         self.communication.send_command(command)
 
     def number_of_measurements(self) -> str:
@@ -279,15 +308,15 @@ class B1500GPIBCommand:
 
     def voltage_measurement_range(self, channel: int, voltage_range: int) -> None:
         """
-        Sets the current measurement range.
+        Sets the voltage measurement range.
 
         :param channel: SMU channel number.
         :param voltage_range: Measurement range.
         """
         self.communication.send_command(f"RV {channel},{voltage_range}")
 
-    def sweep_delay(self, hold: float = 0, delay: float = 0, sdelay: Optional[float] = 0, tdelay: Optional[float] = 0,
-                    mdelay: Optional[float] = 0) -> None:
+    def sweep_delay(self, hold: float = 0, delay: float = 0, sdelay: Optional[float] = None, tdelay: Optional[float] = None,
+                    mdelay: Optional[float] = None) -> None:
         """
         Sets the hold time, delay time, and step delay time for the staircase sweep or multichannel sweep measurement.
 
@@ -298,11 +327,11 @@ class B1500GPIBCommand:
         :param mdelay: Step measurement trigger delay time in seconds.
         """
         command = f"WT {hold},{delay}"
-        if sdelay:
-            command += f",{sdelay}"
-        if tdelay:
-            command += f",{tdelay}"
-        if mdelay:
+        if sdelay is not None or tdelay is not None or mdelay is not None:
+            command += f",{0 if sdelay is None else sdelay}"
+        if tdelay is not None or mdelay is not None:
+            command += f",{0 if tdelay is None else tdelay}"
+        if mdelay is not None:
             command += f",{mdelay}"
         self.communication.send_command(command)
 
@@ -342,7 +371,6 @@ class B1500GPIBCommand:
         self.communication.send_command(f"AAD {channel},{adc_type}")
 
     def set_auto_zero(self, mode: int = 0):
-        command = "AZ"
         self.communication.send_command(f"AZ {mode}")
 
     def set_wait_time(self, wait_type: int, coefficient: float = 1, offset: Optional[float] = 0):
